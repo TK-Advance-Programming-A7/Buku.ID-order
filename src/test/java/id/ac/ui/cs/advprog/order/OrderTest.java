@@ -69,7 +69,21 @@ class OrderTest {
         assertEquals("The Adventures of Sherlock Holmes", order.getBooks().get(1).getTitle());
         assertEquals(888640678, order.getIdUser());
         assertEquals("Safira Sudrajat", order.getAddress());
+        assertEquals("Waiting Checkout", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusToWaitingPayment() {
+        Order order = new Order(this.books, this.amounts, 888640678, "Safira Sudrajat");
+        order.setStatus("Waiting Payment");
         assertEquals("Waiting Payment", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusToWaitingDelivered() {
+        Order order = new Order(this.books, this.amounts, 888640678, "Safira Sudrajat");
+        order.setStatus("Waiting Delivered");
+        assertEquals("Waiting Delivered", order.getStatus());
     }
 
     @Test

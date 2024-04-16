@@ -84,14 +84,20 @@ public class Order {
         this.cancelable = state.isCancelable();
     }
 
-    public void nextStatus() {
-        this.state.nextState(this);
-        this.status = this.state.toString();
-        this.cancelable = this.state.isCancelable();
+    public void nextStatus(){
+
+        state.nextState(this);
+        cancelable = state.isCancelable();
+        status = state.toString();
     }
 
-    public void cancelOrder() {
-        this.setState(new CancelledState());
+    public void cancelOrder(){
+
+        if (cancelable){
+            state = new CancelledState();
+        }
+        cancelable = state.isCancelable();
+        status = state.toString();
     }
 
     public boolean getCancelable() {

@@ -1,10 +1,15 @@
+package id.ac.ui.cs.advprog.order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 class OrderTest {
     private List<Book> books;
@@ -12,6 +17,8 @@ class OrderTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         this.books = new ArrayList<>();
         this.amounts = new ArrayList<>();
 

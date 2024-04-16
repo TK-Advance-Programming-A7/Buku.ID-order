@@ -33,6 +33,7 @@ repositories {
 }
 
 dependencies {
+    implementation("javax.persistence:javax.persistence-api:2.2")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
     testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")

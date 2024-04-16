@@ -1,9 +1,9 @@
 package id.ac.ui.cs.advprog.order;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.status.*;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,13 +16,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
 public class StatusTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Test
     public void testAllStatusStateAndCancelable() throws Exception {
@@ -46,5 +40,4 @@ public class StatusTest {
         assertEquals("Cancelled", order.getStatus());
         assertFalse(order.getCancelable());
     }
-    }
-
+}

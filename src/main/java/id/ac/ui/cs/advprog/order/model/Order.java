@@ -1,5 +1,5 @@
 package id.ac.ui.cs.advprog.order.model;
-import id.ac.ui.cs.advprog.order.status.State;
+import id.ac.ui.cs.advprog.order.status.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,15 +22,23 @@ public class Order {
     private Boolean cancelable;
 
     public Order(int amount) {
-
+        state = new WaitingCheckoutState();
+        cancelable = state.isCancelable();
+        status = state.toString();
     }
 
     public void nextStatus(){
-
+        state.nextState(this);
+        cancelable = state.isCancelable();
+        status = state.toString();
     }
 
     public void cancelOrder(){
-
+        if (cancelable){
+            state = new CancelledState();
+        }
+        cancelable = state.isCancelable();
+        status = state.toString();
     }
 
 }

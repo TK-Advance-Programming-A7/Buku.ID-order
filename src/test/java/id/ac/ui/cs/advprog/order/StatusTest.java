@@ -41,4 +41,3 @@ public class StatusTest {
         assertFalse(order.getCancelable());
     }
 }
-

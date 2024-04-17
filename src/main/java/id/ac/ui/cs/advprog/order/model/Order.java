@@ -59,11 +59,12 @@ public class Order {
         setState(new WaitingCheckoutState());
     }
 
-    public Order(int idUser, ArrayList<OrderItem> newItems) {
+    public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
         this.idUser = idUser;
         this.orderDate = LocalDateTime.now(); 
         setState(new WaitingCheckoutState());
         this.items = newItems;
+        this.address = address;
     }
 
     public void setTotalPrice() {

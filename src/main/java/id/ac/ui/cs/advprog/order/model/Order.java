@@ -101,7 +101,7 @@ public class Order {
         status = state.toString();
     }
 
-    public boolean getCancelable() {
+    public boolean isCancelable() {
         return this.cancelable;
     }
 

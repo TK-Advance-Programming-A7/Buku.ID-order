@@ -69,7 +69,7 @@ class OrderTest {
     @Test
     void testSetCancelable() {
         order.setCancelable(true);
-        assertTrue(order.getCancelable());
+        assertTrue(order.isCancelable());
     }
 
     @Test

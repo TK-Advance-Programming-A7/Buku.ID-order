@@ -37,7 +37,7 @@ Responsible for this service are [Samuel Taniel Mulyadi](https://github.com/Samu
 
 ## Deployment 🚀
 
-Access the service here: [Buku.ID-order](https://github.com/TK-Advance-Programming-A7/Buku.ID-order)
+Access the service here: [Buku.ID-order Deployment](http://35.247.111.123)
 
 
 --------------------------------------------------------------------------------------------

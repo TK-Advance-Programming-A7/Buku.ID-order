@@ -59,7 +59,7 @@ class OrderTest {
     @Test
     void testOrderCreationWithIdUserAndItems() {
         ArrayList<OrderItem> newItems = new ArrayList<>(orderItems);
-        Order newOrder = new Order(123456789, newItems);
+        Order newOrder = new Order(123456789, newItems, "UI");
         assertEquals(123456789, newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
         assertTrue(newOrder.getState() instanceof WaitingCheckoutState);
@@ -69,7 +69,7 @@ class OrderTest {
     @Test
     void testSetCancelable() {
         order.setCancelable(true);
-        assertTrue(order.getCancelable());
+        assertTrue(order.isCancelable());
     }
 
     @Test

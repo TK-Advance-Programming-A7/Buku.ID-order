@@ -59,11 +59,12 @@ public class Order {
         setState(new WaitingCheckoutState());
     }
 
-    public Order(int idUser, ArrayList<OrderItem> newItems) {
+    public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
         this.idUser = idUser;
         this.orderDate = LocalDateTime.now(); 
         setState(new WaitingCheckoutState());
         this.items = newItems;
+        this.address = address;
     }
 
     public void setTotalPrice() {
@@ -85,22 +86,17 @@ public class Order {
     }
 
     public void nextStatus(){
-
         state.nextState(this);
-        cancelable = state.isCancelable();
-        status = state.toString();
+        setState(state);
     }
 
     public void cancelOrder(){
-
         if (cancelable){
-            state = new CancelledState();
+            setState(new CancelledState());
         }
-        cancelable = state.isCancelable();
-        status = state.toString();
     }
 
-    public boolean getCancelable() {
+    public boolean isCancelable() {
         return this.cancelable;
     }
 

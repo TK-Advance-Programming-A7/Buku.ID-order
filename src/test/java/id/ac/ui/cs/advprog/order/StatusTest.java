@@ -22,15 +22,15 @@ public class StatusTest {
     public void testAllStatusStateAndCancelable() throws Exception {
         Order order = new Order(1);
         assertEquals("Waiting Checkout", order.getStatus());
-        assertTrue(order.getCancelable());
+        assertTrue(order.isCancelable());
 
         order.nextStatus();
         assertEquals("Waiting Payment", order.getStatus());
-        assertTrue(order.getCancelable());
+        assertTrue(order.isCancelable());
 
         order.nextStatus();
         assertEquals("Waiting Delivered", order.getStatus());
-        assertFalse(order.getCancelable());
+        assertFalse(order.isCancelable());
 
 
         order = new Order(1);
@@ -38,6 +38,6 @@ public class StatusTest {
         assertEquals("Cancelled", order.getStatus());
         order.nextStatus();
         assertEquals("Cancelled", order.getStatus());
-        assertFalse(order.getCancelable());
+        assertFalse(order.isCancelable());
     }
 }

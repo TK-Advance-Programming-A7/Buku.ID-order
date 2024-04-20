@@ -53,6 +53,10 @@ public class Order {
     @Transient
     private State state;
 
+    public Order() {
+
+    }
+
     public Order(int idUser) {
         this.idUser = idUser;
         this.orderDate = LocalDateTime.now();

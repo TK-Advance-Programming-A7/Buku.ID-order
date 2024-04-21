@@ -1,4 +1,4 @@
-package id.ac.ui.cs.advprog.order;
+package id.ac.ui.cs.advprog.order.model;
 
 import id.ac.ui.cs.advprog.order.model.Book;
 import id.ac.ui.cs.advprog.order.model.Order;

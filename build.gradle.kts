@@ -33,6 +33,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.postgresql:postgresql:42.2.24")
     implementation("javax.persistence:javax.persistence-api:2.2")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
@@ -47,7 +48,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.google.code.gson:gson:2.7")
+    implementation("com.google.code.gson:gson:2.9.1")
 }
 
 tasks.register<Test>("unitTest") {

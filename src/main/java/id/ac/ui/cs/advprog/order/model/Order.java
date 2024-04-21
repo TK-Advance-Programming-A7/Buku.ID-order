@@ -8,8 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "Orders")
@@ -39,7 +38,7 @@ public class Order {
 
     @Getter
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> items = new ArrayList<>();
+    private Map<Integer, OrderItem> items = new HashMap<>();
 
     @Getter
     @Column(name = "total_price")
@@ -53,13 +52,17 @@ public class Order {
     @Transient
     private State state;
 
+    public Order() {
+
+    }
+
     public Order(int idUser) {
         this.idUser = idUser;
         this.orderDate = LocalDateTime.now();
         setState(new WaitingCheckoutState());
     }
 
-    public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
+    public Order(int idUser, Map<Integer, OrderItem> newItems, String address) {
         this.idUser = idUser;
         this.orderDate = LocalDateTime.now(); 
         setState(new WaitingCheckoutState());
@@ -67,9 +70,40 @@ public class Order {
         this.address = address;
     }
 
+    public void addBook(int bookId, int quantity, float price) {
+        OrderItem item = items.get(bookId);
+        if (item != null) {
+            item.setAmount(item.getAmount() + quantity);
+        } else {
+            item = new OrderItem();
+            item.setIdBook(bookId);
+            item.setAmount(quantity);
+            item.setPrice(price);
+            items.put(bookId, item);
+        }
+        setTotalPrice();
+    }
+
+    public void decreaseBook(int bookId, int quantity) {
+        OrderItem item = items.get(bookId);
+        if (item != null) {
+            int newQuantity = item.getAmount() - quantity;
+            if (newQuantity <= 0) {
+                items.remove(bookId);
+            } else {
+                item.setAmount(newQuantity);
+            }
+            setTotalPrice();
+        } else {
+            throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
+        }
+    }
+
+
+
     public void setTotalPrice() {
         float total = 0;
-        for (OrderItem item : items) {
+        for (OrderItem item : items.values()) {
             total += item.getTotalPrice();
         }
         this.totalPrice = total;
@@ -86,22 +120,17 @@ public class Order {
     }
 
     public void nextStatus(){
-
         state.nextState(this);
-        cancelable = state.isCancelable();
-        status = state.toString();
+        setState(state);
     }
 
     public void cancelOrder(){
-
         if (cancelable){
-            state = new CancelledState();
+            setState(new CancelledState());
         }
-        cancelable = state.isCancelable();
-        status = state.toString();
     }
 
-    public boolean getCancelable() {
+    public boolean isCancelable() {
         return this.cancelable;
     }
 

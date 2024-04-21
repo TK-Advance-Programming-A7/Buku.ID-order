@@ -11,7 +11,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_book")
-    private Book book;
+    private int idBook;
 
     @Column(name = "amount")
     private int amount;

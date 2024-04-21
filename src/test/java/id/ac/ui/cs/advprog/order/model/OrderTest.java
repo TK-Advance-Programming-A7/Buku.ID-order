@@ -8,15 +8,13 @@ import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
     private Order order;
-    private List<OrderItem> orderItems;
+    private Map<Integer, OrderItem> orderItems;
     private Book book1;
     private Book book2;
 
@@ -27,24 +25,24 @@ class OrderTest {
         book2 = new Book(2, "The Adventures of Sherlock Holmes", "Arthur Conan Doyle", "Penguin Classics", 8.50f, 75, "9780140439070", "sherlock_holmes.jpg", new Date(), "Mystery", 320, "A collection of twelve stories featuring Sherlock Holmes, a consulting detective.");
 
         // Setup dummy order items
-        orderItems = new ArrayList<>();
+        orderItems = new HashMap<>();
         OrderItem item1 = new OrderItem();
-        item1.setBook(book1);
+        item1.setIdBook(book1.getIdBook());
         item1.setAmount(2);
         item1.setPrice(book1.getPrice());
 
         OrderItem item2 = new OrderItem();
-        item2.setBook(book2);
+        item2.setIdBook(book2.getIdBook());
         item2.setAmount(1);
         item2.setPrice(book2.getPrice());
 
         // Add items to the order list
-        orderItems.add(item1);
-        orderItems.add(item2);
+        orderItems.put(item1.getIdBook(), item1);
+        orderItems.put(item2.getIdBook(), item2);
 
         // Initialize the order
         order = new Order(888640678);
-        order.getItems().addAll(orderItems);
+        order.getItems().putAll(orderItems);
         order.setTotalPrice();
     }
 
@@ -58,7 +56,7 @@ class OrderTest {
 
     @Test
     void testOrderCreationWithIdUserAndItems() {
-        ArrayList<OrderItem> newItems = new ArrayList<>(orderItems);
+        Map<Integer, OrderItem> newItems = new HashMap<>(orderItems);
         Order newOrder = new Order(123456789, newItems, "UI");
         assertEquals(123456789, newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
@@ -69,7 +67,7 @@ class OrderTest {
     @Test
     void testSetCancelable() {
         order.setCancelable(true);
-        assertTrue(order.getCancelable());
+        assertTrue(order.isCancelable());
     }
 
     @Test

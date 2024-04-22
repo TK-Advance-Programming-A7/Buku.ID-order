@@ -1,11 +1,13 @@
 package id.ac.ui.cs.advprog.order.model;
 
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 // Dummy class for testing
+
 
 @Setter @Getter
 public class Book {

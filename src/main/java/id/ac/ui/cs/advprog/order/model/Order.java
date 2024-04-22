@@ -6,8 +6,7 @@ import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
@@ -26,7 +25,7 @@ public class Order {
 
     @Getter
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
 
     @Getter
     @Column(name = "status")
@@ -37,7 +36,7 @@ public class Order {
     private String address;
 
     @Getter
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order")
     private Map<Integer, OrderItem> items = new HashMap<>();
 
     @Getter
@@ -58,13 +57,13 @@ public class Order {
 
     public Order(int idUser) {
         this.idUser = idUser;
-        this.orderDate = LocalDateTime.now();
+        this.orderDate = new Date();
         setState(new WaitingCheckoutState());
     }
 
     public Order(int idUser, Map<Integer, OrderItem> newItems, String address) {
         this.idUser = idUser;
-        this.orderDate = LocalDateTime.now(); 
+        this.orderDate = new Date();
         setState(new WaitingCheckoutState());
         this.items = newItems;
         this.address = address;

@@ -3,14 +3,14 @@ package id.ac.ui.cs.advprog.order.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
+import jakarta.persistence.*;
+
 
 @Getter @Setter
+@Entity
 public class OrderItem {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_book")
+    @Column(name = "id_book")
     private int idBook;
 
     @Column(name = "amount")
@@ -22,5 +22,15 @@ public class OrderItem {
     public float getTotalPrice() {
         return price * amount;
     }
+
+    @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_orderItem")
+    private int idOrderItem;
+
+    @ManyToOne
+    @JoinColumn(name = "id_order")
+    private Order order;
 
 }

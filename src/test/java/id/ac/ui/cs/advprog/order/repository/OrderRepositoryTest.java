@@ -122,11 +122,11 @@ class OrderRepositoryTest {
     @Test
     void testFindAllByUserIfUserCorrect() {
         Mockito.when(orderRepository.save(order)).thenReturn(order);
-        Mockito.when(orderRepository.findAllByUser(orders.get(0).getIdUser())).thenReturn(orders);
+        Mockito.when(orderRepository.findAllByIdUser(orders.get(0).getIdUser())).thenReturn(orders);
 
         orderRepository.saveAll(orders);
 
-        List <Order> orderList = orderRepository.findAllByUser(
+        List <Order> orderList = orderRepository.findAllByIdUser(
                 orders.get(0).getIdUser());
         assertEquals(orders.size(), orderList.size());
     }
@@ -134,11 +134,11 @@ class OrderRepositoryTest {
     @Test
     void testFindAllByUserIfUserIncorrect() {
         Mockito.when(orderRepository.saveAll(orders)).thenReturn(orders);
-        Mockito.when(orderRepository.findAllByUser(-1)).thenReturn(new ArrayList<>());
+        Mockito.when(orderRepository.findAllByIdUser(-1)).thenReturn(new ArrayList<>());
 
         orderRepository.saveAll(orders);
 
-        List<Order> orderList = orderRepository.findAllByUser(-1);
+        List<Order> orderList = orderRepository.findAllByIdUser(-1);
         assertTrue(orderList.isEmpty());
     }
 

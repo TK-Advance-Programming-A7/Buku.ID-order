@@ -1,10 +1,10 @@
 package id.ac.ui.cs.advprog.order.model;
 
-import id.ac.ui.cs.advprog.order.status.CancelledState;
-import id.ac.ui.cs.advprog.order.status.State;
-import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
+import id.ac.ui.cs.advprog.order.status.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.*;
 
 import jakarta.persistence.*;
 import java.util.*;
@@ -13,29 +13,25 @@ import java.util.*;
 @Table(name = "Orders")
 public class Order {
 
-    @Getter
+    @Getter @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_order")
     private int idOrder;
 
-    @Getter
+    @Getter @Setter
     @Column(name = "id_user")
     private int idUser;
 
-    @Getter
+    @Getter @Setter
     @Column(name = "order_date")
     private Date orderDate;
 
     @Getter
-    @Column(name = "status")
-    private String status;
-
-    @Getter 
     @Column(name = "address")
     private String address;
 
-    @Getter
+    @Getter @Setter
     @OneToMany(mappedBy = "order")
     private Map<Integer, OrderItem> items = new HashMap<>();
 
@@ -46,6 +42,10 @@ public class Order {
     @Setter
     @Column(name = "cancelable")
     private boolean cancelable;
+
+    @Getter
+    @Column(name = "status")
+    private String status;
 
     @Getter
     @Transient
@@ -59,6 +59,7 @@ public class Order {
         this.idUser = idUser;
         this.orderDate = new Date();
         setState(new WaitingCheckoutState());
+        this.setTotalPrice();
     }
 
     public Order(int idUser, Map<Integer, OrderItem> newItems, String address) {
@@ -67,6 +68,7 @@ public class Order {
         setState(new WaitingCheckoutState());
         this.items = newItems;
         this.address = address;
+        this.setTotalPrice();
     }
 
     public void addBook(int bookId, int quantity, float price) {
@@ -108,13 +110,33 @@ public class Order {
         this.totalPrice = total;
     }
 
-    public void setStatus(State state){
-        this.state = state;
-        this.status = state.toString();
+    public void setStatus(String status) {
+        if ("Waiting Checkout".equals(status)) {
+            if (!(this.state instanceof WaitingCheckoutState)) {
+                this.state = new WaitingCheckoutState();
+            }
+        } else if ("Waiting Payment".equals(status)) {
+            if (!(this.state instanceof WaitingPaymentState)) {
+                this.state = new WaitingPaymentState();
+            }
+        } else if ("Cancelled".equals(status)) {
+            if (!(this.state instanceof CancelledState)) {
+                this.state = new CancelledState();
+            }
+        } else if ("Waiting Delivered".equals(status)) {
+            if (!(this.state instanceof WaitingDeliveredState)) {
+                this.state = new WaitingDeliveredState();
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid state value: " + status);
+        }
+        this.status = this.state.toString();
     }
-    
+
+
     public void setState(State state) {
-        this.setStatus(state); 
+        this.setState(state);
+        this.setStatus(state.toString());
         this.cancelable = state.isCancelable();
     }
 

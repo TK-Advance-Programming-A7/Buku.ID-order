@@ -52,20 +52,18 @@ public class OrderService {
         }
     }
 
-
-
     public String addOrder(Order order) {
         repository.save(order);
         String order_json = new Gson().toJson(order);
         return order_json;
     }
 
-    public String getOrderStatus(int id_order) {
+    public String getOrderState(int id_order) {
         Optional<Order> orderOptional = repository.findById(id_order);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-            String status = new Gson().toJson(order.getStatus().toString());
-            return status;
+            String state = new Gson().toJson(order.getState().toString());
+            return state;
         } else {
             throw new NoSuchElementException();
         }
@@ -101,6 +99,40 @@ public class OrderService {
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
         }
+    }
+
+    public String editOrder(int idOrder, Order updatedOrder) {
+        Optional<Order> orderOptional = repository.findById(idOrder);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            // Update order properties with values from updatedOrder
+            order.setItems(updatedOrder.getItems());
+            order.setIdUser(updatedOrder.getIdUser());
+            order.setState(updatedOrder.getState());
+            order.setAddress(updatedOrder.getAddress());
+            order.setOrderDate(updatedOrder.getOrderDate());
+            order.setTotalPrice();
+
+            repository.save(order);
+            return new Gson().toJson(order);
+        } else {
+            throw new NoSuchElementException("Order with ID " + idOrder + " not found");
+        }
+    }
+
+    public String deleteOrder(int idOrder) {
+        Optional<Order> orderOptional = repository.findById(idOrder);
+        if (orderOptional.isPresent()) {
+            repository.deleteById(idOrder);
+            return new Gson().toJson("Delete is succesful.");
+        } else {
+            throw new NoSuchElementException("Order with ID " + idOrder + " not found");
+        }
+    }
+
+    public String getAllOrdersOfUser(int userId) {
+        List<Order> orders = repository.findAllByIdUser(userId);
+        return new Gson().toJson(orders);
     }
 
 

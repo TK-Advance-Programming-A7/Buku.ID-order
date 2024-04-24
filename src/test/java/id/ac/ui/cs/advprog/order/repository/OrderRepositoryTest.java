@@ -76,7 +76,7 @@ class OrderRepositoryTest {
         Order order = orders.get(0);
 
         order.setAddress("Jl. Pepaya no.33");
-        order.setStatus(new WaitingDeliveredState());
+        order.setStatus("Waiting Delivered");
 
         Mockito.when(orderRepository.save(order)).thenReturn(order);
         Mockito.when(orderRepository.findById(order.getIdOrder())).thenReturn(Optional.of(order));

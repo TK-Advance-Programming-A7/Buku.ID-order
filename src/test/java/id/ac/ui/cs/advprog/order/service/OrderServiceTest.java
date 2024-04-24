@@ -125,7 +125,7 @@ class OrderServiceTest {
         // Test
         orderService.updateNextStatus(order);
 
-        assertEquals("Waiting Payment", order.getStatus()); // Expecting status to be updated to "Waiting Payment"
+        assertEquals("Waiting Payment", order.getState()); // Expecting status to be updated to "Waiting Payment"
     }
 
     @Test
@@ -183,7 +183,7 @@ class OrderServiceTest {
         when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
 
         // Test
-        String result = orderService.getOrderStatus(orders.get(0).getIdOrder());
+        String result = orderService.getOrderState(orders.get(0).getIdOrder());
 
         assertNotNull(result);
         assertEquals("\"Waiting Checkout\"", result); // Expecting status to be "WaitingCheckout"
@@ -196,7 +196,7 @@ class OrderServiceTest {
 
         // Test
         assertThrows(NoSuchElementException.class, () -> {
-            orderService.getOrderStatus(9999); // Non-existing order ID
+            orderService.getOrderState(9999); // Non-existing order ID
         });
     }
 
@@ -211,7 +211,7 @@ class OrderServiceTest {
 
         assertNotNull(result);
         
-        assertEquals("Cancelled", orders.get(0).getStatus()); // Expecting status to be "Cancelled"
+        assertEquals("Cancelled", orders.get(0).getState()); // Expecting status to be "Cancelled"
     }
 
     @Test

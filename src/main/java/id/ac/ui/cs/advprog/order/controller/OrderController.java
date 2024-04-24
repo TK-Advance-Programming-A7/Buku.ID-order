@@ -12,16 +12,104 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api/v1/order")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/api/v1/order")
-    public String getOrder(@RequestBody HashMap<String, Integer> json_id_order) {
-        String order_json = orderService.getOrder(json_id_order.get("idOrder"));
-        return order_json;
+    @PostMapping("")
+    public ResponseEntity<?> getOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+        try {
+            String orderJson = orderService.getOrder(jsonIdOrder.get("idOrder"));
+            return ResponseEntity.ok(orderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
+        }
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addOrder(@RequestBody HashMap<String, Order> requestBody) {
+        try {
+            Order order = requestBody.get("order");
+            String addedOrderJson = orderService.addOrder(order);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedOrderJson);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add order.");
+        }
+    }
+
+
+    @PatchMapping("/edit")
+    public ResponseEntity<String> editOrder(@RequestBody HashMap<String, Order> requestBody) {
+        try {
+            Order order = requestBody.get("order");
+            String editedOrderJson = orderService.editOrder(order.getIdOrder(), order);
+            return ResponseEntity.ok(editedOrderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order with the given ID not found.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to edit order.");
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+        try {
+            String deletedOrderJson = orderService.deleteOrder(jsonIdOrder.get("idOrder"));
+            return ResponseEntity.ok(deletedOrderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order with the given ID not found.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete order.");
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllOrdersOfUser(@RequestBody int idUser) {
+        try {
+            String ordersJson = orderService.getAllOrdersOfUser(idUser);
+            return ResponseEntity.ok(ordersJson);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
+        }
+    }
+
+    @PostMapping("/book/add")
+    public ResponseEntity<String> addBookToOrder(@RequestBody HashMap<String, Object> requestBody) {
+        try {
+            int orderId = (int) requestBody.get("orderId");
+            int bookId = (int) requestBody.get("bookId");
+            int quantity = (int) requestBody.get("quantity");
+            float price = Float.parseFloat(requestBody.get("price").toString());
+
+            String addedBookToOrderJson = orderService.addBookToOrder(orderId, bookId, quantity, price);
+            return ResponseEntity.ok(addedBookToOrderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order or Book with the given ID not found.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request body.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add book to order.");
+        }
+    }
+
+    @PatchMapping("/book/decrease")
+    public ResponseEntity<String> decreaseBookInOrder(@RequestBody HashMap<String, Object> requestBody) {
+        try {
+            int orderId = (int) requestBody.get("orderId");
+            int bookId = (int) requestBody.get("bookId");
+            int quantity = (int) requestBody.get("quantity");
+
+            String decreasedBookInOrderJson = orderService.decreaseBookInOrder(orderId, bookId, quantity);
+            return ResponseEntity.ok(decreasedBookInOrderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order with the given ID not found.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request body.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to decrease book in order.");
+        }
     }
 
 

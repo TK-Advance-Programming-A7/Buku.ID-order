@@ -135,7 +135,7 @@ public class Order {
 
 
     public void setState(State state) {
-        this.setState(state);
+        this.state = state;
         this.setStatus(state.toString());
         this.cancelable = state.isCancelable();
     }

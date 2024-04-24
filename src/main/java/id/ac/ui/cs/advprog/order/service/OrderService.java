@@ -108,7 +108,7 @@ public class OrderService {
             // Update order properties with values from updatedOrder
             order.setItems(updatedOrder.getItems());
             order.setIdUser(updatedOrder.getIdUser());
-            order.setState(updatedOrder.getState());
+            order.setStatus(updatedOrder.getStatus());
             order.setAddress(updatedOrder.getAddress());
             order.setOrderDate(updatedOrder.getOrderDate());
             order.setTotalPrice();

@@ -1,16 +1,27 @@
 package id.ac.ui.cs.advprog.order.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.gson.annotations.Expose;
 import id.ac.ui.cs.advprog.order.status.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.*;
 
 import jakarta.persistence.*;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Entity
 @Table(name = "Orders")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idOrder")
 public class Order {
 
     @Getter @Setter
@@ -25,17 +36,17 @@ public class Order {
 
     @Getter @Setter
     @Column(name = "order_date")
-    private Date orderDate;
+    private String orderDate;
 
     @Getter
     @Column(name = "address")
     private String address;
 
-    @Getter @Setter
-    @OneToMany(mappedBy = "order")
-    private Map<Integer, OrderItem> items = new HashMap<>();
+    @Getter @Setter @ToString.Exclude @JsonManagedReference @EqualsAndHashCode.Exclude @Fetch(value = FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items = new ArrayList<>();
 
-    @Getter
+    @Getter @JsonIgnore
     @Column(name = "total_price")
     private float totalPrice;
 
@@ -57,54 +68,26 @@ public class Order {
 
     public Order(int idUser) {
         this.idUser = idUser;
-        this.orderDate = new Date();
+        this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());
         this.setTotalPrice();
     }
 
-    public Order(int idUser, Map<Integer, OrderItem> newItems, String address) {
+    public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
         this.idUser = idUser;
-        this.orderDate = new Date();
+        this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());
         this.items = newItems;
+        for(OrderItem item: items){
+            item.setOrder(this);
+        }
         this.address = address;
         this.setTotalPrice();
     }
 
-    public void addBook(int bookId, int quantity, float price) {
-        OrderItem item = items.get(bookId);
-        if (item != null) {
-            item.setAmount(item.getAmount() + quantity);
-        } else {
-            item = new OrderItem();
-            item.setIdBook(bookId);
-            item.setAmount(quantity);
-            item.setPrice(price);
-            items.put(bookId, item);
-        }
-        setTotalPrice();
-    }
-
-    public void decreaseBook(int bookId, int quantity) {
-        OrderItem item = items.get(bookId);
-        if (item != null) {
-            int newQuantity = item.getAmount() - quantity;
-            if (newQuantity <= 0) {
-                items.remove(bookId);
-            } else {
-                item.setAmount(newQuantity);
-            }
-            setTotalPrice();
-        } else {
-            throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
-        }
-    }
-
-
-
     public void setTotalPrice() {
         float total = 0;
-        for (OrderItem item : items.values()) {
+        for (OrderItem item : items) {
             total += item.getTotalPrice();
         }
         this.totalPrice = total;
@@ -135,7 +118,7 @@ public class Order {
 
 
     public void setState(State state) {
-        this.setState(state);
+        this.state = state;
         this.setStatus(state.toString());
         this.cancelable = state.isCancelable();
     }

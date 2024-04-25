@@ -8,13 +8,14 @@ import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
     private Order order;
-    private Map<Integer, OrderItem> orderItems;
+    private ArrayList<OrderItem> orderItems;
     private Book book1;
     private Book book2;
 
@@ -25,7 +26,7 @@ class OrderTest {
         book2 = new Book(2, "The Adventures of Sherlock Holmes", "Arthur Conan Doyle", "Penguin Classics", 8.50f, 75, "9780140439070", "sherlock_holmes.jpg", new Date(), "Mystery", 320, "A collection of twelve stories featuring Sherlock Holmes, a consulting detective.");
 
         // Setup dummy order items
-        orderItems = new HashMap<>();
+        orderItems = new ArrayList<>();
         OrderItem item1 = new OrderItem();
         item1.setIdBook(book1.getIdBook());
         item1.setAmount(2);
@@ -37,12 +38,12 @@ class OrderTest {
         item2.setPrice(book2.getPrice());
 
         // Add items to the order list
-        orderItems.put(item1.getIdBook(), item1);
-        orderItems.put(item2.getIdBook(), item2);
+        orderItems.add(item1);
+        orderItems.add(item2);
 
         // Initialize the order
         order = new Order(888640678);
-        order.getItems().putAll(orderItems);
+        order.getItems().addAll(orderItems);
         order.setTotalPrice();
     }
 
@@ -56,7 +57,7 @@ class OrderTest {
 
     @Test
     void testOrderCreationWithIdUserAndItems() {
-        Map<Integer, OrderItem> newItems = new HashMap<>(orderItems);
+        ArrayList<OrderItem> newItems = new ArrayList<>(orderItems);
         Order newOrder = new Order(123456789, newItems, "UI");
         assertEquals(123456789, newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());

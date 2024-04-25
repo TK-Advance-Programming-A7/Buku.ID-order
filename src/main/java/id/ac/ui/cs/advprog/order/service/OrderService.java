@@ -1,17 +1,17 @@
 package id.ac.ui.cs.advprog.order.service;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.*;
 import id.ac.ui.cs.advprog.order.model.Order;
+import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.repository.OrderRepository;
+import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.status.CancelledState;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import java.util.NoSuchElementException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -19,7 +19,10 @@ public class OrderService {
     @Autowired
     private OrderRepository repository;
 
-    private TaskScheduler scheduler;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private Runnable createRunnable(Order order){
         Runnable aRunnable = new Runnable(){
@@ -35,27 +38,24 @@ public class OrderService {
         repository.save(order);
     }
 
-    public String findAll() {
+    public String findAll() throws JsonProcessingException {
         List<Order> orders = (List<Order>) repository.findAll();
-        String json_orders = new Gson().toJson(orders);
-        return json_orders;
+        return objectMapper.writeValueAsString(orders);
     }
 
-    public String getOrder(int id_order) {
+    public String getOrder(int id_order) throws JsonProcessingException {
         Optional<Order> orderOptional = repository.findById(id_order);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-            String order_json = new Gson().toJson(order);
-            return order_json;
+            return objectMapper.writeValueAsString(order);
         } else {
             throw new NoSuchElementException("Order with ID " + id_order + " not found");
         }
     }
 
-    public String addOrder(Order order) {
+    public String addOrder(Order order) throws JsonProcessingException {
         repository.save(order);
-        String order_json = new Gson().toJson(order);
-        return order_json;
+        return objectMapper.writeValueAsString(order);
     }
 
     public String getOrderState(int id_order) {
@@ -69,7 +69,7 @@ public class OrderService {
         }
     }
 
-    public String cancelOrder(int id_order) {
+    public String cancelOrder(int id_order) throws JsonProcessingException {
         Optional<Order> orderOptional = repository.findById(id_order);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
@@ -81,40 +81,85 @@ public class OrderService {
         }
     }
 
-    public String addBookToOrder(int orderId, int bookId, int quantity, float price) {
+    public List<OrderItem> getOrderItemsByOrder(int order) {
+        return orderItemRepository.findByOrder(repository.findById(order).orElseThrow(() -> new NoSuchElementException("Order with ID " + order + " not found")));
+    }
+    public String addBookToOrder(int orderId, int bookId, int quantity, float price) throws JsonProcessingException {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order with ID " + orderId + " not found"));
-        order.addBook(bookId, quantity, price);
+
+//        OrderItem item = orderItemRepository.findByOrderAndIdBook(order, bookId);
+        OrderItem item = null;
+        for (OrderItem itemIn : order.getItems()) {
+            if (itemIn.getIdBook() == bookId){
+                item = itemIn;
+                break;
+            }
+        }
+        // Find if the book already exists in the order items
+        if (item != null) {
+            item.setAmount(item.getAmount() + quantity);
+        } else {
+            item = new OrderItem();
+            item.setOrder(order);
+            item.setIdBook(bookId);
+            item.setAmount(quantity);
+            item.setPrice(price);
+            order.getItems().add(item);
+        }
+
+        order.setTotalPrice();
         repository.save(order);
-        return new Gson().toJson(order);
+
+        return objectMapper.writeValueAsString(order);
     }
 
-    public String decreaseBookInOrder(int orderId, int bookId, int quantity) {
+    public String decreaseBookInOrder(int orderId, int bookId, int quantity) throws JsonProcessingException {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order with ID " + orderId + " not found"));
         try {
-            order.decreaseBook(bookId, quantity);
+//            OrderItem item = orderItemRepository.findByOrderAndIdBook(order, bookId);
+            OrderItem item = null;
+            for (OrderItem itemIn : order.getItems()) {
+                if (itemIn.getIdBook() == bookId){
+                    item = itemIn;
+                    break;
+                }
+            }
+
+            if (item != null) {
+                int newQuantity = item.getAmount() - quantity;
+                if (newQuantity <= 0) {
+//                    order.getItems().remove(bookId);
+                    orderItemRepository.delete(item);
+                } else {
+                    item.setAmount(newQuantity);
+                }
+                order.setTotalPrice();
+            } else {
+                throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
+            }
             repository.save(order);
-            return new Gson().toJson(order);
+            return objectMapper.writeValueAsString(order);
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
         }
     }
 
-    public String editOrder(int idOrder, Order updatedOrder) {
+    public String editOrder(int idOrder, Order updatedOrder) throws JsonProcessingException {
         Optional<Order> orderOptional = repository.findById(idOrder);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
             // Update order properties with values from updatedOrder
             order.setItems(updatedOrder.getItems());
             order.setIdUser(updatedOrder.getIdUser());
-            order.setState(updatedOrder.getState());
+            order.setStatus(updatedOrder.getStatus());
             order.setAddress(updatedOrder.getAddress());
             order.setOrderDate(updatedOrder.getOrderDate());
             order.setTotalPrice();
 
             repository.save(order);
-            return new Gson().toJson(order);
+            return objectMapper.writeValueAsString(order);
         } else {
             throw new NoSuchElementException("Order with ID " + idOrder + " not found");
         }
@@ -130,9 +175,9 @@ public class OrderService {
         }
     }
 
-    public String getAllOrdersOfUser(int userId) {
+    public String getAllOrdersOfUser(int userId) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUser(userId);
-        return new Gson().toJson(orders);
+        return objectMapper.writeValueAsString(orders);
     }
 
 

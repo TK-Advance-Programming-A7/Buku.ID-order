@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.order.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class OrderController {
             return ResponseEntity.ok(orderJson);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,9 +69,9 @@ public class OrderController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<?> getAllOrdersOfUser(@RequestBody int idUser) {
+    public ResponseEntity<?> getAllOrdersOfUser(@RequestBody HashMap<String, Integer> jsonIdUser) {
         try {
-            String ordersJson = orderService.getAllOrdersOfUser(idUser);
+            String ordersJson = orderService.getAllOrdersOfUser(jsonIdUser.get("idUser"));
             return ResponseEntity.ok(ordersJson);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
@@ -78,8 +81,8 @@ public class OrderController {
     @PostMapping("/book/add")
     public ResponseEntity<String> addBookToOrder(@RequestBody HashMap<String, Object> requestBody) {
         try {
-            int orderId = (int) requestBody.get("orderId");
-            int bookId = (int) requestBody.get("bookId");
+            int orderId = (int) requestBody.get("idOrder");
+            int bookId = (int) requestBody.get("idBook");
             int quantity = (int) requestBody.get("quantity");
             float price = Float.parseFloat(requestBody.get("price").toString());
 
@@ -97,14 +100,14 @@ public class OrderController {
     @PatchMapping("/book/decrease")
     public ResponseEntity<String> decreaseBookInOrder(@RequestBody HashMap<String, Object> requestBody) {
         try {
-            int orderId = (int) requestBody.get("orderId");
-            int bookId = (int) requestBody.get("bookId");
+            int orderId = (int) requestBody.get("idOrder");
+            int bookId = (int) requestBody.get("idBook");
             int quantity = (int) requestBody.get("quantity");
 
             String decreasedBookInOrderJson = orderService.decreaseBookInOrder(orderId, bookId, quantity);
             return ResponseEntity.ok(decreasedBookInOrderJson);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order with the given ID not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order or Book with the given ID not found.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request body.");
         } catch (Exception e) {

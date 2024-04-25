@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderRepositoryTest {
     private OrderRepository orderRepository;
     private List <Order> orders;
-    private Map<Integer, OrderItem> orderItems;
+    private ArrayList<OrderItem> orderItems;
     private Order order;
 
     @BeforeEach
@@ -30,7 +30,7 @@ class OrderRepositoryTest {
 
         orders = new ArrayList<>();
 
-        orderItems = new HashMap<>();
+        orderItems = new ArrayList<>();
         OrderItem item1 = new OrderItem();
         item1.setIdBook(book1.getIdBook());
         item1.setAmount(2);
@@ -41,8 +41,8 @@ class OrderRepositoryTest {
         item2.setAmount(1);
         item2.setPrice(book2.getPrice());
 
-        orderItems.put(item1.getIdBook(), item1);
-        orderItems.put(item2.getIdBook(), item2);
+        orderItems.add(item1);
+        orderItems.add(item2);
 
         order = new Order(8886406, orderItems, "Rukita Pepaya Margonda");
         order.setTotalPrice();

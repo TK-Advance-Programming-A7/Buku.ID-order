@@ -40,13 +40,16 @@ public class OrderService {
 
     public String findAll() throws JsonProcessingException {
         List<Order> orders = (List<Order>) repository.findAll();
+        orders.forEach(order -> order.setStatus(order.getStatus()));  // Reinitialize state for each order
         return objectMapper.writeValueAsString(orders);
     }
+
 
     public String getOrder(int id_order) throws JsonProcessingException {
         Optional<Order> orderOptional = repository.findById(id_order);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
+            order.setStatus(order.getStatus());
             return objectMapper.writeValueAsString(order);
         } else {
             throw new NoSuchElementException("Order with ID " + id_order + " not found");
@@ -55,6 +58,7 @@ public class OrderService {
 
     public String addOrder(Order order) throws JsonProcessingException {
         repository.save(order);
+        order.setStatus(order.getStatus());
         return objectMapper.writeValueAsString(order);
     }
 
@@ -74,6 +78,7 @@ public class OrderService {
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
             order.setState(new CancelledState());
+            order.setStatus(order.getStatus());
             repository.save(order);
             return this.getOrder(id_order);
         } else {
@@ -84,6 +89,7 @@ public class OrderService {
     public List<OrderItem> getOrderItemsByOrder(int order) {
         return orderItemRepository.findByOrder(repository.findById(order).orElseThrow(() -> new NoSuchElementException("Order with ID " + order + " not found")));
     }
+
     public String addBookToOrder(int orderId, int bookId, int quantity, float price) throws JsonProcessingException {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order with ID " + orderId + " not found"));
@@ -109,6 +115,7 @@ public class OrderService {
         }
 
         order.setTotalPrice();
+        order.setStatus(order.getStatus());
         repository.save(order);
 
         return objectMapper.writeValueAsString(order);
@@ -140,6 +147,7 @@ public class OrderService {
                 throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
             }
             repository.save(order);
+            order.setStatus(order.getStatus());
             return objectMapper.writeValueAsString(order);
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Book with ID " + bookId + " not found in the order.");
@@ -177,8 +185,11 @@ public class OrderService {
 
     public String getAllOrdersOfUser(int userId) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUser(userId);
+        orders.forEach(order -> order.setStatus(order.getStatus()));  // This reinitializes the transient State based on the persistent Status
+
         return objectMapper.writeValueAsString(orders);
     }
+
 
 
 }

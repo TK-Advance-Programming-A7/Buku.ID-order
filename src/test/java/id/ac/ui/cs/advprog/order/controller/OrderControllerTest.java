@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,11 +73,11 @@ public class OrderControllerTest {
 
         when(orderService.getOrder(1)).thenReturn(orderJson);
         when(orderService.addOrder(Mockito.any(Order.class))).thenReturn(orderJson);
-        when(orderService.editOrder(Mockito.anyInt(), Mockito.any(Order.class))).thenReturn(orderJson);
+        when(orderService.editOrder(anyInt(), Mockito.any(Order.class))).thenReturn(orderJson);
         when(orderService.deleteOrder(1)).thenReturn(orderJson);
         when(orderService.getAllOrdersOfUser(1)).thenReturn(orderJson);
-        when(orderService.addBookToOrder(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyFloat())).thenReturn(orderJson);
-        when(orderService.decreaseBookInOrder(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(orderJson);
+        when(orderService.addBookToOrder(anyInt(), anyInt(), anyInt(), Mockito.anyFloat())).thenReturn(orderJson);
+        when(orderService.decreaseBookInOrder(anyInt(), anyInt(), anyInt())).thenReturn(orderJson);
     }
 
     @Test
@@ -90,6 +91,89 @@ public class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(orderJson));
     }
+
+    @Test
+    public void getOrderNotExist() throws Exception {
+        Mockito.when(orderService.getOrder(anyInt())).thenThrow(new NoSuchElementException("No such order"));
+        HashMap<String, Integer> requestContent = new HashMap<>();
+        requestContent.put("idOrder", 999); // Non-existing ID
+        mockMvc.perform(post("/api/v1/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestContent)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("There is no such order."));
+    }
+
+    @Test
+    public void testEditOrder() throws Exception {
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", order);
+
+        String requestBodyJson = objectMapper.writeValueAsString(requestBody);
+
+        mockMvc.perform(patch("/api/v1/order/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBodyJson))
+                .andExpect(status().isOk())
+                .andExpect(content().json(orderJson));
+    }
+
+    @Test
+    public void testDeleteOrder() throws Exception {
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 1);
+
+        String expectedResponse = "Deleted successfully";
+        Mockito.when(orderService.deleteOrder(1)).thenReturn(expectedResponse);
+
+        mockMvc.perform(delete("/api/v1/order/delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(jsonIdOrder)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(expectedResponse));
+    }
+
+    @Test
+    public void testDeleteOrderNotExist() throws Exception {
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 999); // ID that does not exist
+
+        Mockito.when(orderService.deleteOrder(999)).thenThrow(new NoSuchElementException("Order with the given ID not found"));
+
+        mockMvc.perform(delete("/api/v1/order/delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(jsonIdOrder)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Order with the given ID not found.")); // Check the response message
+    }
+
+
+    @Test
+    public void testGetAllOrdersOfUser() throws Exception {
+        Map<String, Integer> jsonIdUser = new HashMap<>();
+        jsonIdUser.put("idUser", 1);
+
+        mockMvc.perform(get("/api/v1/order/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(jsonIdUser)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(orderJson));
+    }
+
+    @Test
+    public void testGetAllOrdersOfUserNotExist() throws Exception {
+        Map<String, Integer> jsonIdUser = new HashMap<>();
+        jsonIdUser.put("idUser", 999);
+
+        when(orderService.getAllOrdersOfUser(999)).thenReturn("[]");
+
+        mockMvc.perform(get("/api/v1/order/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(jsonIdUser)))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
+
 
 }
 

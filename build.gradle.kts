@@ -13,6 +13,15 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.sonarqube") version "4.4.1.3373"
+}
+
+sonar {
+  properties {
+    property("sonar.projectKey", "tk-a7-adpro_order")
+    property("sonar.organization", "tk-a7-adpro")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -49,6 +58,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.google.code.gson:gson:2.9.1")
+    testImplementation("com.h2database:h2")
 }
 
 tasks.register<Test>("unitTest") {

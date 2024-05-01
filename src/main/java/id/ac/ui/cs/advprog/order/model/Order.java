@@ -43,7 +43,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
 
-    @Getter @Setter @JsonIgnore
+    @Getter @Setter
     @Column(name = "total_price")
     private float totalPrice;
 
@@ -121,6 +121,7 @@ public class Order {
     }
 
     public void nextStatus(){
+        this.setStatus(this.status);
         state.nextState(this);
         setState(state);
     }

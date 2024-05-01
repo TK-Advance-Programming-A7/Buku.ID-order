@@ -27,15 +27,26 @@ public class OrderService {
     private Runnable createRunnable(Order order){
         Runnable aRunnable = new Runnable(){
             public void run(){
-                updateNextStatus(order);
+                try {
+                    updateNextStatus(order.getIdOrder());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         };
         return aRunnable;
     }
 
-    public void updateNextStatus(Order order) {
-        order.nextStatus();
-        repository.save(order);
+    public String updateNextStatus(int id_order) throws JsonProcessingException {
+        Optional<Order> orderOptional = repository.findById(id_order);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.nextStatus();
+            repository.save(order);
+            return objectMapper.writeValueAsString(order);
+        } else {
+            throw new NoSuchElementException("Order with ID " + id_order + " not found");
+        }
     }
 
     public String findAll() throws JsonProcessingException {

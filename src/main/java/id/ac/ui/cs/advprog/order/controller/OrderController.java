@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -115,5 +114,16 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("/next")
+    public ResponseEntity<?> nextStatus(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+        try {
+            String updatedOrder = orderService.updateNextStatus(jsonIdOrder.get("idOrder"));
+            return ResponseEntity.ok(updatedOrder);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

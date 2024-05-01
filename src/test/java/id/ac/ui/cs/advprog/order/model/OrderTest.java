@@ -43,7 +43,7 @@ class OrderTest {
         Order newOrder = new Order(123456789);
         assertEquals(123456789, newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
-        assertTrue(newOrder.getState() instanceof WaitingCheckoutState);
+        assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
     }
 
     @Test
@@ -52,7 +52,7 @@ class OrderTest {
         Order newOrder = new Order(123456789, newItems, "UI");
         assertEquals(123456789, newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
-        assertTrue(newOrder.getState() instanceof WaitingCheckoutState);
+        assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
         assertEquals(newItems, newOrder.getItems());
     }
 
@@ -65,7 +65,7 @@ class OrderTest {
     @Test
     void testSetState() {
         order.setState(new CancelledState());
-        assertTrue(order.getState() instanceof CancelledState);
+        assertInstanceOf(CancelledState.class, order.getState());
     }
 
     @Test
@@ -85,4 +85,58 @@ class OrderTest {
         assertThrows(IllegalArgumentException.class, () -> order.setAddress(""));
     }
 
+    @Test
+    void testSetStatusWaitingCheckout() {
+        order.setStatus("Waiting Checkout");
+        assertEquals("Waiting Checkout", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusWaitingPayment() {
+        order.setStatus("Waiting Payment");
+        assertEquals("Waiting Payment", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusCancelled() {
+        order.setStatus("Cancelled");
+        assertEquals("Cancelled", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusInvalid() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            order.setStatus("Invalid Status");
+        });
+
+        String expectedMessage = "Invalid state value: Invalid Status";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testCancelOrderWhenCancelable() {
+        order.setCancelable(true);
+        order.cancelOrder();
+        assertEquals("Cancelled", order.getStatus());
+    }
+
+    @Test
+    void testCancelOrderWhenNotCancelable() {
+        order.setCancelable(false);
+        order.cancelOrder();
+        assertNotEquals("Cancelled", order.getStatus());
+    }
+
+    @Test
+    void testSetAndGetOrder() {
+        Order testOrder = new Order();
+        testOrder.setIdOrder(1);
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(testOrder);
+
+        assertEquals(testOrder, orderItem.getOrder());
+    }
 }

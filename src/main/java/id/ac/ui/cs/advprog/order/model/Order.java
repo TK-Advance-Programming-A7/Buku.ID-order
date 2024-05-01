@@ -1,10 +1,6 @@
 package id.ac.ui.cs.advprog.order.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.google.gson.annotations.Expose;
+import com.fasterxml.jackson.annotation.*;
 import id.ac.ui.cs.advprog.order.status.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
@@ -38,6 +34,7 @@ public class Order {
     @Column(name = "order_date")
     private String orderDate;
 
+
     @Getter
     @Column(name = "address")
     private String address;
@@ -46,7 +43,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
 
-    @Getter @JsonIgnore
+    @Getter @Setter @JsonIgnore
     @Column(name = "total_price")
     private float totalPrice;
 

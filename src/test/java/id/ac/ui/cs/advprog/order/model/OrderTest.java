@@ -1,14 +1,10 @@
 package id.ac.ui.cs.advprog.order.model;
 
-import id.ac.ui.cs.advprog.order.model.Book;
-import id.ac.ui.cs.advprog.order.model.Order;
-import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.status.CancelledState;
 import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,26 +12,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderTest {
     private Order order;
     private ArrayList<OrderItem> orderItems;
-    private Book book1;
-    private Book book2;
 
     @BeforeEach
     void setUp() {
-        // Setup dummy books
-        book1 = new Book(1, "Sampo Cap Bambang", "Bambang", "Bambang CV", 10.99f, 100, "1234567890", "sampo_cap_bambang.jpg", new Date(), "Children's Books", 50, "A children's book about Sampo Cap Bambang adventures.");
-        book2 = new Book(2, "The Adventures of Sherlock Holmes", "Arthur Conan Doyle", "Penguin Classics", 8.50f, 75, "9780140439070", "sherlock_holmes.jpg", new Date(), "Mystery", 320, "A collection of twelve stories featuring Sherlock Holmes, a consulting detective.");
 
         // Setup dummy order items
         orderItems = new ArrayList<>();
         OrderItem item1 = new OrderItem();
-        item1.setIdBook(book1.getIdBook());
+        item1.setIdBook(1);
         item1.setAmount(2);
-        item1.setPrice(book1.getPrice());
+        item1.setPrice(10.99f);
 
         OrderItem item2 = new OrderItem();
-        item2.setIdBook(book2.getIdBook());
+        item2.setIdBook(2);
         item2.setAmount(1);
-        item2.setPrice(book2.getPrice());
+        item2.setPrice(8.50f);
 
         // Add items to the order list
         orderItems.add(item1);

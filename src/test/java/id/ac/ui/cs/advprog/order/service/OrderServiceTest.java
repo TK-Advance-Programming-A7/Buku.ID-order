@@ -1,20 +1,16 @@
 package id.ac.ui.cs.advprog.order.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.JsonIOException;
 import id.ac.ui.cs.advprog.order.model.Order;
-import id.ac.ui.cs.advprog.order.model.Book;
 import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.repository.OrderRepository;
-import id.ac.ui.cs.advprog.order.service.OrderService;
 import id.ac.ui.cs.advprog.order.status.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -40,26 +36,20 @@ class OrderServiceTest {
 
     private List<Order> orders;
     private ArrayList<OrderItem> orderItems;
-    private Book book1;
-    private Book book2;
 
     @BeforeEach
     void setUp() {
-        // Setup dummy books
-        book1 = new Book(1, "Sampo Cap Bambang", "Bambang", "Bambang CV", 10.99f, 100, "1234567890", "sampo_cap_bambang.jpg", new Date(), "Children's Books", 50, "A children's book about Sampo Cap Bambang adventures.");
-        book2 = new Book(2, "The Adventures of Sherlock Holmes", "Arthur Conan Doyle", "Penguin Classics", 8.50f, 75, "9780140439070", "sherlock_holmes.jpg", new Date(), "Mystery", 320, "A collection of twelve stories featuring Sherlock Holmes, a consulting detective.");
-
         // Setup dummy order items
         orderItems = new ArrayList<OrderItem>();
         OrderItem item1 = new OrderItem();
-        item1.setIdBook(book1.getIdBook());
+        item1.setIdBook(1);
         item1.setAmount(2);
-        item1.setPrice(book1.getPrice());
+        item1.setPrice(10.99f);
 
         OrderItem item2 = new OrderItem();
-        item2.setIdBook(book2.getIdBook());
+        item2.setIdBook(2);
         item2.setAmount(1);
-        item2.setPrice(book2.getPrice());
+        item2.setPrice(8.50f);
 
         // Add items to the order list
         orderItems.add(item1);
@@ -102,7 +92,7 @@ class OrderServiceTest {
         when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
 
         // Test
-        String result = orderService.addBookToOrder(orders.get(0).getIdOrder(), book1.getIdBook(), 1, book1.getPrice());
+        String result = orderService.addBookToOrder(orders.get(0).getIdOrder(), 1, 1, 10.99f);
 
         assertNotNull(result);
         
@@ -115,7 +105,7 @@ class OrderServiceTest {
         when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
-        String result = orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), book1.getIdBook(), 1);
+        String result = orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), 1, 1);
 
         assertNotNull(result);
         

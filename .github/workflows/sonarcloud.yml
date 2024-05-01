@@ -5,6 +5,7 @@ on:
       - main
       - dev
       - staging
+      - dev-sonarcloud
   
   pull_request:
     types: [opened, synchronize, reopened]

@@ -171,5 +171,39 @@ public class OrderControllerTest {
     }
 
 
+    @Test
+    public void testNextStatusOrderExists() throws Exception {
+        int idOrder = 1;
+        Order order = new Order();
+        order.setIdOrder(1);
+        String updatedOrder = objectMapper.writeValueAsString(order);
+
+        when(orderService.updateNextStatus(idOrder)).thenReturn(updatedOrder);
+
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", idOrder);
+
+        mockMvc.perform(patch("/api/v1/order/next")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new Gson().toJson(jsonIdOrder)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(updatedOrder));
+    }
+
+    @Test
+    public void testNextStatusOrderDoesNotExist() throws Exception {
+        int idOrderNotExist = 1000;
+
+        when(orderService.updateNextStatus(idOrderNotExist)).thenThrow(new NoSuchElementException());
+
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", idOrderNotExist);
+
+        mockMvc.perform(patch("/api/v1/order/next")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new Gson().toJson(jsonIdOrder)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("There is no such order."));
+    }
 }
 

@@ -161,8 +161,13 @@ public class OrderServiceImpl implements OrderService{
 
     public String cancelOrder(int id_order) throws JsonProcessingException {
         Order order = findOrderById(id_order);
-        order.setState(new CancelledState());
-        order.setStatus(order.getStatus());
+        if(order.isCancelable()){
+            order.setState(new CancelledState());
+        }
+        else{
+            throw new IllegalArgumentException("Order with ID " + id_order + " cannot be canceled.");
+        }
+
         repository.save(order);
         return getOrder(id_order);
     }

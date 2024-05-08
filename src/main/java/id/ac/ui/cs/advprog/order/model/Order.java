@@ -38,7 +38,7 @@ public class Order {
     private String address;
 
     @ToString.Exclude @JsonManagedReference @EqualsAndHashCode.Exclude @Fetch(value = FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> items = new ArrayList<>();
 
     @Column(name = "total_price")

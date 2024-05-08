@@ -15,6 +15,7 @@ public interface OrderService {
     List<OrderItem> getOrderItemsByOrder(int order);
     String editOrder(int idOrder, Order updatedOrder) throws JsonProcessingException;
     String getAllOrdersOfUser(int userId) throws JsonProcessingException;
+    String getAllOrdersOfUserByStatus(int userId, String status) throws JsonProcessingException;
     String deleteOrder(int idOrder);
     String addBookToOrder(int orderId, int bookId, int quantity, float price) throws JsonProcessingException;
     String decreaseBookInOrder(int orderId, int bookId, int quantity) throws JsonProcessingException;

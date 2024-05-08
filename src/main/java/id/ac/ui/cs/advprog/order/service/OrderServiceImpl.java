@@ -104,10 +104,18 @@ public class OrderServiceImpl implements OrderService{
         return objectMapper.writeValueAsString(orders);
     }
 
+    public String getAllOrdersOfUserByStatus(int userId, String status) throws JsonProcessingException {
+        List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
+        orders.forEach(order -> order.setStatus(order.getStatus())); // This reinitializes the transient State based on the persistent Status
+
+        return objectMapper.writeValueAsString(orders);
+    }
+
+
     public String deleteOrder(int idOrder) {
         Order order = findOrderById(idOrder);
         repository.delete(order);
-        return new Gson().toJson("Delete is successful.");
+        return new Gson().toJson("Delete is scd..uccessful.");
     }
 
     private OrderItem findOrderItemByBookId(Order order, int bookId) {

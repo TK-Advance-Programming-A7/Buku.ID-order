@@ -34,6 +34,8 @@ public class OrderController {
         });
     }
 
+
+
     @PostMapping("/add")
     public CompletableFuture<ResponseEntity<?>> addOrder(@RequestBody HashMap<String, Order> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
@@ -81,6 +83,22 @@ public class OrderController {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String ordersJson = orderService.getAllOrdersOfUser(jsonIdUser.get("idUser"));
+                return ResponseEntity.ok(ordersJson);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
+            }
+        });
+    }
+
+    @GetMapping("/users/status")
+    public CompletableFuture<ResponseEntity<?>> getAllOrdersOfUserStatus(@RequestBody HashMap<String, Object> requestBody) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+
+                int idUser = (int) requestBody.get("idUser");
+                String status = (String) requestBody.get("status");
+
+                String ordersJson = orderService.getAllOrdersOfUserByStatus(idUser, status);
                 return ResponseEntity.ok(ordersJson);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");

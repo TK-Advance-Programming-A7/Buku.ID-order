@@ -162,11 +162,9 @@ public class OrderService {
     public String cancelOrder(int id_order) throws JsonProcessingException {
         Order order = findOrderById(id_order);
         order.setState(new CancelledState());
-        order.setStatus(order.getStatus());
         repository.save(order);
-        return getOrder(id_order);
+        return objectMapper.writeValueAsString(order);
     }
-
 
 
 }

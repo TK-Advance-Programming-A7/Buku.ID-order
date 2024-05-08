@@ -122,20 +122,14 @@ class OrderServiceTest {
         });
     }
 
-//    @Test
-//    void updateNextStatus_ValidOrder_OrderStatusUpdatedSuccessfully() {
-//        // Mock order
-//        Order order = orders.getFirst();
-//        order.setState(new WaitingCheckoutState()); // Initial state
-//
-//        // Mock repository
-//        when(orderRepository.save(any())).thenReturn(order);
-//
-//        // Test
-//        orderService.updateNextStatus(order.getIdOrder());
-//
-//        assertEquals("Waiting Payment", order.getState().toString()); // Expecting status to be updated to "Waiting Payment"
-//    }
+    @Test
+    void updateNextStatus_ValidOrder_OrderStatusUpdatedSuccessfully() throws JsonProcessingException {
+        when(orderRepository.findById(orders.get(0).getIdOrder())).thenReturn(Optional.of(orders.get(0)));
+        when(orderRepository.save(any(Order.class))).thenReturn(orders.get(0));
+        orderService.updateNextStatus(orders.get(0).getIdOrder());
+        assertEquals("Waiting Payment", orders.get(0).getState().toString()); // Expecting status to be updated to "Waiting Payment"
+    }
+
 
     @Test
     void findAll_OrdersExist_ReturnsAllOrdersAsJson() throws JsonProcessingException {

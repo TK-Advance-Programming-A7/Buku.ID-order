@@ -126,4 +126,16 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("/cancel")
+    public ResponseEntity<?> cancelOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+        try {
+            String cancelOrder = orderService.cancelOrder(jsonIdOrder.get("idOrder"));
+            return ResponseEntity.ok(cancelOrder);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -45,7 +45,7 @@ public class Order {
     private float totalPrice;
 
     @Column(name = "cancelable")
-    private boolean cancelable; // kok tiba tiba bisa?
+    private boolean cancelable;
 
     @Column(name = "status")
     private String status;

@@ -5,7 +5,6 @@ import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.repository.OrderRepository;
-import id.ac.ui.cs.advprog.order.status.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +25,7 @@ import static org.mockito.Mockito.*;
 class OrderServiceTest {
 
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     @Mock
     private OrderRepository orderRepository;

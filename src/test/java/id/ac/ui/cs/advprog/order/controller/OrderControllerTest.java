@@ -2,10 +2,9 @@ package id.ac.ui.cs.advprog.order.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import id.ac.ui.cs.advprog.order.controller.OrderController;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.model.OrderItem;
-import id.ac.ui.cs.advprog.order.service.OrderService;
+import id.ac.ui.cs.advprog.order.service.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +26,7 @@ public class OrderControllerTest {
     private OrderController orderController;
 
     @Mock
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

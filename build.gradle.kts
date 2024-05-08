@@ -58,6 +58,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.google.code.gson:gson:2.9.1")
+    testImplementation("com.h2database:h2")
 }
 
 tasks.register<Test>("unitTest") {

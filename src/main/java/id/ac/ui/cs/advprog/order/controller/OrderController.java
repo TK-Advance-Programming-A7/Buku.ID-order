@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -19,6 +20,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ExecutorService virtualExecutor;
 
     @PostMapping("")
     public ResponseEntity<?> getOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {

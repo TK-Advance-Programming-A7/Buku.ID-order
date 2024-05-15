@@ -64,6 +64,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    // seed data
+    implementation("net.datafaker:datafaker:1.5.0")
 }
 
 tasks.register<Test>("unitTest") {

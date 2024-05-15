@@ -15,11 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -227,6 +225,31 @@ class OrderServiceTest {
         assertThrows(NoSuchElementException.class, () -> {
             orderService.cancelOrder(9999); // Non-existing order ID
         });
+    }
+    
+    @Test
+    void deleteItemFromOrder_ExistingItem_Success() throws JsonProcessingException {
+ 
+        Order order = new Order();
+        order.setIdOrder(1);
+        OrderItem item = new OrderItem();
+        item.setIdOrderItem(1);
+        order.getItems().add(item);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+        when(orderItemRepository.findById(1)).thenReturn(Optional.of(item));
+
+        String result = orderService.deleteItemFromOrder(1, 1);
+
+        verify(orderRepository, times(2)).save(order);
+        verify(orderItemRepository, times(1)).deleteById(1); 
+        assertNotNull(result);
+    }
+
+    @Test
+    void deleteItemFromOrder_NonExistingItem() {
+        lenient().when(orderItemRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> orderService.deleteItemFromOrder(1, 999));
     }
 
 }

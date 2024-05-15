@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
+
 @RequestMapping("/api/v1/order")
 public class OrderController {
 
@@ -155,6 +157,39 @@ public class OrderController {
                 throw new RuntimeException(e);
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order is not cancelable.");
+            }
+        });
+    }
+
+    @PostMapping("/users/status")
+    public CompletableFuture<ResponseEntity<?>> getOrderByUserIdAndStatus(@RequestBody HashMap<String, Object> requestBody) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                int userId = (int) requestBody.get("idUser");
+                String status = (String) requestBody.get("status");
+                String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);
+                return ResponseEntity.ok(ordersJson);
+            } catch (NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID or status not provided.");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
+            }
+        });
+    }
+
+    @DeleteMapping("/book/delete")
+    public CompletableFuture<ResponseEntity<?>> deleteItemFromOrder(@RequestBody HashMap<String, Object> requestBody) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                int orderId = (int) requestBody.get("idOrder");
+                int itemId = (int) requestBody.get("idOrderItem");
+
+                String deletedItemFromOrderJson = orderService.deleteItemFromOrder(orderId, itemId);
+                return ResponseEntity.ok(deletedItemFromOrderJson);
+            } catch (NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order or Item with the given ID not found.");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete item from order.");
             }
         });
     }

@@ -252,4 +252,16 @@ class OrderServiceTest {
         assertThrows(NoSuchElementException.class, () -> orderService.deleteItemFromOrder(1, 999));
     }
 
+    @Test
+    void getOrdersByUserIdAndStatus_ValidUserIdAndStatus_OrdersRetrievedSuccessfully() throws JsonProcessingException {
+        int userId = 123;
+        String status = "Waiting Checkout";
+        when(orderRepository.findAllByIdUserAndStatus(userId, status)).thenReturn(orders);
+
+        String result = orderService.getOrdersByUserIdAndStatus(userId, status);
+
+        assertNotNull(result);
+        verify(orderRepository, times(1)).findAllByIdUserAndStatus(userId, status);
+    }
+
 }

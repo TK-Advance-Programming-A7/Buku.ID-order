@@ -3,6 +3,7 @@ package id.ac.ui.cs.advprog.order.model;
 import com.fasterxml.jackson.annotation.*;
 import id.ac.ui.cs.advprog.order.status.*;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,9 @@ import java.util.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "Orders")
+@Table(name = "Orders", indexes = {
+        @Index(name = "idx_user_id", columnList = "id_user")
+})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idOrder")
 public class Order {
 

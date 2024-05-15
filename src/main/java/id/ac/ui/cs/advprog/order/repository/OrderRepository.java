@@ -2,6 +2,8 @@ package id.ac.ui.cs.advprog.order.repository;
 
 import id.ac.ui.cs.advprog.order.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
 @Repository
 public interface
 OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findAllByIdUser(int idUser);
+
+    @Query("SELECT o FROM Order o WHERE o.idUser = :idUser")
+    List<Order> findAllByIdUser(@Param("idUser") int idUser);
     List<Order> findAllByIdUserAndStatus(int idUser, String status);
 }

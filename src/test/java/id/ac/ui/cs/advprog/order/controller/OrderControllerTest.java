@@ -202,5 +202,53 @@ public class OrderControllerTest {
         assertEquals("There is no such order.", responseEntity.getBody());
     }
 
+    @Test
+    public void testGetOrderByUserIdAndStatus() throws Exception {
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idUser", 1);
+        requestBody.put("status", "Waiting Checkout");
+
+        when(orderService.getOrdersByUserIdAndStatus(1, "Waiting Checkout")).thenReturn(orderJson);
+
+        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getOrderByUserIdAndStatus(requestBody);
+
+        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(orderJson, responseEntity.getBody());
+    }
+
+    @Test
+    public void testDeleteItemFromOrder() throws Exception {
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", 1);
+        requestBody.put("idOrderItem", 1);
+
+        String expectedResponse = "Item deleted successfully";
+        when(orderService.deleteItemFromOrder(1, 1)).thenReturn(expectedResponse);
+
+        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
+
+        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse, responseEntity.getBody());
+    }
+
+    @Test
+    public void testDeleteItemFromOrderNotFound() throws Exception {
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", 1);
+        requestBody.put("idOrderItem", 999); // Assuming this item doesn't exist
+
+        when(orderService.deleteItemFromOrder(1, 999)).thenThrow(new NoSuchElementException());
+
+        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
+
+        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Order or Item with the given ID not found.", responseEntity.getBody());
+    }
 
 }

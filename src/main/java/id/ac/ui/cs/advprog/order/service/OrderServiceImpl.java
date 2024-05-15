@@ -6,6 +6,7 @@ import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.repository.OrderRepository;
 import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.status.CancelledState;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -172,6 +173,34 @@ public class OrderServiceImpl implements OrderService{
         return getOrder(id_order);
     }
 
+    public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
+        List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
+        orders.forEach(order -> order.setStatus(order.getStatus()));
+        return objectMapper.writeValueAsString(orders);
+    }
 
+    @Transactional
+    public String deleteItemFromOrder(int orderId, int itemId) throws JsonProcessingException {
+        Order order = findOrderById(orderId);
+        OrderItem item = findOrderItemById(itemId);
+
+        if (item != null) {
+            order.getItems().removeIf(obj -> obj.getIdOrderItem() == itemId);
+            repository.save(order); // Save the order back to the database
+            orderItemRepository.deleteById(itemId); // Delete the item from the database
+            order.setTotalPrice();
+        } else {
+            throw new NoSuchElementException(String.format("Item with ID %d not found in the order.", itemId));
+        }
+
+        repository.save(order);
+        return objectMapper.writeValueAsString(order);
+    }
+
+
+    private OrderItem findOrderItemById(int id) {
+        return orderItemRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + " not found"));
+    }
 
 }

@@ -35,6 +35,8 @@ public interface OrderService {
 
     String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException;
 
+    String getAllOrdersOfUserByStatus(int userId, String status) throws JsonProcessingException;
+
 
 }
 

@@ -10,4 +10,5 @@ import java.util.List;
 public interface
 OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByIdUser(int idUser);
+    List<Order> findAllByIdUserAndStatus(int idUser, String status);
 }

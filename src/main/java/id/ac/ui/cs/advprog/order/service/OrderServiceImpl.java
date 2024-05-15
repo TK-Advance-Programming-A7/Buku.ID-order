@@ -173,12 +173,6 @@ public class OrderServiceImpl implements OrderService{
         return getOrder(id_order);
     }
 
-    public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
-        List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
-        orders.forEach(order -> order.setStatus(order.getStatus()));
-        return objectMapper.writeValueAsString(orders);
-    }
-
     @Transactional
     public String deleteItemFromOrder(int orderId, int itemId) throws JsonProcessingException {
         Order order = findOrderById(orderId);
@@ -201,6 +195,12 @@ public class OrderServiceImpl implements OrderService{
     private OrderItem findOrderItemById(int id) {
         return orderItemRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + " not found"));
+    }
+
+    public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
+        List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
+        orders.forEach(order -> order.setStatus(order.getStatus()));
+        return objectMapper.writeValueAsString(orders);
     }
 
 }

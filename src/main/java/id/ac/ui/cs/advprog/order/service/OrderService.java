@@ -31,9 +31,10 @@ public interface OrderService {
 
     String cancelOrder(int id_order) throws JsonProcessingException;
 
+    String deleteItemFromOrder(int orderId, int itemId) throws JsonProcessingException;
+
     String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException;
 
-    String deleteItemFromOrder(int orderId, int itemId) throws JsonProcessingException;
 
 }
 

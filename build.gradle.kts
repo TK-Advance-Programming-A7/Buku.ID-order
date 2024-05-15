@@ -59,6 +59,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.google.code.gson:gson:2.9.1")
     testImplementation("com.h2database:h2")
+
+    // New dependencies
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
 }
 
 tasks.register<Test>("unitTest") {

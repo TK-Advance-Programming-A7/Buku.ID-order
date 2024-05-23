@@ -22,21 +22,17 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("")
-    public CompletableFuture<ResponseEntity<?>> getOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String orderJson = orderService.getOrder(jsonIdOrder.get("idOrder"));
-                return ResponseEntity.ok(orderJson);
-            } catch (NoSuchElementException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    @GetMapping("/{idOrder}")
+    public ResponseEntity<?> getOrder(@PathVariable int idOrder) {
+        try {
+            String orderJson = orderService.getOrder(idOrder);
+            return ResponseEntity.ok(orderJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-
 
     @PostMapping("/add")
     public CompletableFuture<ResponseEntity<?>> addOrder(@RequestBody HashMap<String, Order> requestBody) {
@@ -80,32 +76,14 @@ public class OrderController {
         });
     }
 
-    @GetMapping("/users")
-    public CompletableFuture<ResponseEntity<?>> getAllOrdersOfUser(@RequestBody HashMap<String, Integer> jsonIdUser) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String ordersJson = orderService.getAllOrdersOfUser(jsonIdUser.get("idUser"));
-                return ResponseEntity.ok(ordersJson);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
-            }
-        });
-    }
-
-    @GetMapping("/users/status")
-    public CompletableFuture<ResponseEntity<?>> getAllOrdersOfUserStatus(@RequestBody HashMap<String, Object> requestBody) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-
-                int idUser = (int) requestBody.get("idUser");
-                String status = (String) requestBody.get("status");
-
-                String ordersJson = orderService.getAllOrdersOfUserByStatus(idUser, status);
-                return ResponseEntity.ok(ordersJson);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
-            }
-        });
+    @GetMapping("/users/{idUser}")
+    public ResponseEntity<?> getAllOrdersOfUser(@PathVariable int idUser) {
+        try {
+            String ordersJson = orderService.getAllOrdersOfUser(idUser);
+            return ResponseEntity.ok(ordersJson);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
+        }
     }
 
     @PostMapping("/book/add")
@@ -179,20 +157,16 @@ public class OrderController {
         });
     }
 
-    @PostMapping("/users/status")
-    public CompletableFuture<ResponseEntity<?>> getOrderByUserIdAndStatus(@RequestBody HashMap<String, Object> requestBody) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                int userId = (int) requestBody.get("idUser");
-                String status = (String) requestBody.get("status");
-                String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);
-                return ResponseEntity.ok(ordersJson);
-            } catch (NoSuchElementException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID or status not provided.");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch orders.");
-            }
-        });
+    @GetMapping("users/status")
+    public ResponseEntity<?> getOrderByUserIdAndStatus(@RequestParam int userId, @RequestParam String status) {
+        try {
+            String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);
+            return ResponseEntity.ok(ordersJson);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body("User ID or status not provided.");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to fetch orders.");
+        }
     }
 
     @DeleteMapping("/book/delete")

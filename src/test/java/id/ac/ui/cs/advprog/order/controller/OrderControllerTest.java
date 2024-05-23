@@ -78,28 +78,27 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrder() throws Exception {
-        HashMap<String, Integer> jsonIdOrder = new HashMap<>();
-        jsonIdOrder.put("idOrder", 1);
+        int orderId = 1;
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getOrder(jsonIdOrder);
+        when(orderService.getOrder(orderId)).thenReturn(orderJson);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<?> responseEntity = orderController.getOrder(orderId);
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(orderJson, responseEntity.getBody());
     }
 
+
     @Test
     public void getOrderNotExist() throws ExecutionException, InterruptedException {
-        HashMap<String, Integer> requestContent = new HashMap<>();
-        requestContent.put("idOrder", 999);
+        int nonExistentOrderId = 999;
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getOrder(requestContent);
+        ResponseEntity<?> responseEntity = orderController.getOrder(nonExistentOrderId);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("There is no such order.", responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Order not found.", responseEntity.getBody());
     }
+
 
     @Test
     public void testDeleteOrder() throws Exception {
@@ -134,13 +133,9 @@ public class OrderControllerTest {
 
     @Test
     public void testGetAllOrdersOfUser() throws Exception {
-        HashMap<String, Integer> jsonIdUser = new HashMap<>();
-        jsonIdUser.put("idUser", 1);
+        int userId = 1;
 
-        when(orderService.getAllOrdersOfUser(1)).thenReturn(orderJson);
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getAllOrdersOfUser(jsonIdUser);
-
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<?> responseEntity = orderController.getAllOrdersOfUser(userId);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(orderJson, responseEntity.getBody());
@@ -148,14 +143,11 @@ public class OrderControllerTest {
 
     @Test
     public void testGetAllOrdersOfUserNotExist() throws Exception {
-        HashMap<String, Integer> jsonIdUser = new HashMap<>();
-        jsonIdUser.put("idUser", 999);
+        int nonExistentUserId = 999;
 
-        when(orderService.getAllOrdersOfUser(999)).thenReturn("[]");
+        when(orderService.getAllOrdersOfUser(nonExistentUserId)).thenReturn("[]");
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getAllOrdersOfUser(jsonIdUser);
-
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<?> responseEntity = orderController.getAllOrdersOfUser(nonExistentUserId);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("[]", responseEntity.getBody());
@@ -202,21 +194,7 @@ public class OrderControllerTest {
         assertEquals("There is no such order.", responseEntity.getBody());
     }
 
-    @Test
-    public void testGetOrderByUserIdAndStatus() throws Exception {
-        HashMap<String, Object> requestBody = new HashMap<>();
-        requestBody.put("idUser", 1);
-        requestBody.put("status", "Waiting Checkout");
 
-        when(orderService.getOrdersByUserIdAndStatus(1, "Waiting Checkout")).thenReturn(orderJson);
-
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.getOrderByUserIdAndStatus(requestBody);
-
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(orderJson, responseEntity.getBody());
-    }
 
     @Test
     public void testDeleteItemFromOrder() throws Exception {
@@ -236,6 +214,32 @@ public class OrderControllerTest {
     }
 
     @Test
+    public void testGetOrderByUserIdAndStatus() throws Exception {
+        int userId = 1;
+        String status = "Waiting Checkout";
+
+        when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenReturn(orderJson);
+
+        ResponseEntity<?> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(orderJson, responseEntity.getBody());
+    }
+
+    @Test
+    public void testGetOrderByUserIdAndStatusFailed() throws Exception {
+        int userId = 9999;
+        String status = "Failed";
+
+        when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenThrow(new NoSuchElementException());
+
+        ResponseEntity<?> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("User ID or status not provided.", responseEntity.getBody());
+    }
+
+    @Test
     public void testDeleteItemFromOrderNotFound() throws Exception {
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("idOrder", 1);
@@ -250,5 +254,6 @@ public class OrderControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Order or Item with the given ID not found.", responseEntity.getBody());
     }
+
 
 }

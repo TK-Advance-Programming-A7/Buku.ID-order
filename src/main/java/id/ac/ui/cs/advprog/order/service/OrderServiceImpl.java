@@ -105,14 +105,6 @@ public class OrderServiceImpl implements OrderService{
         return objectMapper.writeValueAsString(orders);
     }
 
-    public String getAllOrdersOfUserByStatus(int userId, String status) throws JsonProcessingException {
-        List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
-        orders.forEach(order -> order.setStatus(order.getStatus())); // This reinitializes the transient State based on the persistent Status
-
-        return objectMapper.writeValueAsString(orders);
-    }
-
-
     public String deleteOrder(int idOrder) {
         Order order = findOrderById(idOrder);
         repository.delete(order);
@@ -140,7 +132,7 @@ public class OrderServiceImpl implements OrderService{
             item.setPrice(price);
             order.getItems().add(item);
         }
-
+        orderItemRepository.save(item);
         order.setTotalPrice();
         order.setStatus(order.getStatus());
         repository.save(order);
@@ -154,7 +146,9 @@ public class OrderServiceImpl implements OrderService{
         if (item != null) {
             int newQuantity = item.getAmount() - quantity;
             if (newQuantity <= 0) {
-                order.getItems().remove(item);
+                order.getItems().removeIf(obj -> obj.getIdOrderItem() == item.getIdOrderItem());
+                repository.save(order);
+                orderItemRepository.deleteById(item.getIdOrderItem());
             } else {
                 item.setAmount(newQuantity);
             }

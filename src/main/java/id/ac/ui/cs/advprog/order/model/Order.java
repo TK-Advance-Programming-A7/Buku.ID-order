@@ -1,6 +1,8 @@
 package id.ac.ui.cs.advprog.order.model;
 
 import com.fasterxml.jackson.annotation.*;
+import id.ac.ui.cs.advprog.order.repository.OrderRepository;
+import id.ac.ui.cs.advprog.order.service.OrderServiceImpl;
 import id.ac.ui.cs.advprog.order.status.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
@@ -23,7 +25,7 @@ import java.util.*;
         @Index(name = "idx_user_id", columnList = "id_user")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idOrder")
-public class Order {
+public abstract class Order extends OrderItem implements OrderRepository, State {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

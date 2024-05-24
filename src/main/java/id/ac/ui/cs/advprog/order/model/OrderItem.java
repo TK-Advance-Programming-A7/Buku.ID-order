@@ -1,6 +1,7 @@
 package id.ac.ui.cs.advprog.order.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.Date;
 
 @Getter @Setter
 @Entity
-public class OrderItem {
+public abstract class OrderItem implements OrderItemRepository {
 
     @Column(name = "id_book")
     private int idBook;

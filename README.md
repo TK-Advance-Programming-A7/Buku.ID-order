@@ -42,3 +42,18 @@ Access the service here: [Buku.ID-order Deployment](http://35.247.111.123)
 
 --------------------------------------------------------------------------------------------
 *© Kelompok A7, Fakultas Ilmu Komputer, Universitas Indonesia - 2023/2024*
+
+### Component Diagram
+<div style="text-align: center;">
+
+![Class Diagram Adpro a7.drawio (9).png](Img%2FClass%20Diagram%20Adpro%20a7.drawio%20%289%29.png)
+
+</div>
+
+### Code Diagram
+
+<div style="text-align: center;">
+
+![Class Diagram Adpro a7.drawio (10).png](Img%2FClass%20Diagram%20Adpro%20a7.drawio%20%2810%29.png)
+
+</div>

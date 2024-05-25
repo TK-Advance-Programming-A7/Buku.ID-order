@@ -59,29 +59,14 @@ class OrderServiceTest {
                 orderItems,
                 "Depok");
         orders.add(order1);
-//        item1.setOrder(order1);
-//        orderItemRepository.save(item1);
-//        item2.setOrder(order1);
-//        orderItemRepository.save(item2);
-//        orderRepository.save(order1);
         Order order2 = new Order(888640679,
                 orderItems,
                 "Jakarta");
         orders.add(order2);
-//        item1.setOrder(order2);
-//        orderItemRepository.save(item1);
-//        item2.setOrder(order2);
-//        orderItemRepository.save(item2);
-//        orderRepository.save(order2);
         Order order3 = new Order(888640680,
                 orderItems,
                 "Cibinong");
         orders.add(order3);
-//        item1.setOrder(order3);
-//        orderItemRepository.save(item1);
-//        item2.setOrder(order3);
-//        orderItemRepository.save(item2);
-//        orderRepository.save(order3);
     }
 
     @Test

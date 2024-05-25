@@ -17,28 +17,17 @@ import java.util.*;
 @Service
 public class OrderServiceImpl implements OrderService{
 
-    @Autowired
-    private OrderRepository repository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final OrderRepository repository;
+    private final OrderItemRepository orderItemRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String ORDER_NOT_FOUND = "Order with ID ";
     private static final String NOT_FOUND = " not found";
 
-    private Runnable createRunnable(Order order){
-        Runnable aRunnable = new Runnable(){
-            public void run(){
-                try {
-                    updateNextStatus(order.getIdOrder());
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        return aRunnable;
+    @Autowired
+    public OrderServiceImpl(OrderRepository repository, OrderItemRepository orderItemRepository) {
+        this.repository = repository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     private Order findOrderById(int id) {

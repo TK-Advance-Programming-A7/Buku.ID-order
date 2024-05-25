@@ -58,7 +58,7 @@ class OrderControllerTest {
         orderItems.add(item1);
         orderItems.add(item2);
 
-        order = new Order(8886406, orderItems, "Rukita Pepaya Margonda");
+        order = new Order("8886406", orderItems, "Rukita Pepaya Margonda");
         order.setTotalPrice();
         orders.add(order);
 
@@ -71,7 +71,7 @@ class OrderControllerTest {
         when(orderService.addOrder(Mockito.any(Order.class))).thenReturn(orderJson);
         when(orderService.editOrder(anyInt(), Mockito.any(Order.class))).thenReturn(orderJson);
         when(orderService.deleteOrder(1)).thenReturn(orderJson);
-        when(orderService.getAllOrdersOfUser(1)).thenReturn(orderJson);
+        when(orderService.getAllOrdersOfUser("1")).thenReturn(orderJson);
         when(orderService.addBookToOrder(anyInt(), anyInt(), anyInt(), Mockito.anyFloat())).thenReturn(orderJson);
         when(orderService.decreaseBookInOrder(anyInt(), anyInt(), anyInt())).thenReturn(orderJson);
     }
@@ -133,7 +133,7 @@ class OrderControllerTest {
 
     @Test
     void testGetAllOrdersOfUser(){
-        int userId = 1;
+        String userId = "1";
 
         ResponseEntity<String> responseEntity = orderController.getAllOrdersOfUser(userId);
 
@@ -143,7 +143,7 @@ class OrderControllerTest {
 
     @Test
     void testGetAllOrdersOfUserNotExist() throws Exception {
-        int nonExistentUserId = 999;
+        String nonExistentUserId = "999";
 
         when(orderService.getAllOrdersOfUser(nonExistentUserId)).thenReturn("[]");
 
@@ -214,7 +214,7 @@ class OrderControllerTest {
 
     @Test
     void testGetOrderByUserIdAndStatus() throws Exception {
-        int userId = 1;
+        String userId = "1";
         String status = "Waiting Checkout";
 
         when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenReturn(orderJson);
@@ -227,7 +227,7 @@ class OrderControllerTest {
 
     @Test
     void testGetOrderByUserIdAndStatusFailed() throws Exception {
-        int userId = 9999;
+        String userId = "9999";
         String status = "Failed";
 
         when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenThrow(new NoSuchElementException());

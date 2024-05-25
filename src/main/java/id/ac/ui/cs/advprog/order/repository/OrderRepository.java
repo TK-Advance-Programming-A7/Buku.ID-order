@@ -13,6 +13,6 @@ public interface
 OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.idUser = :idUser")
-    List<Order> findAllByIdUser(@Param("idUser") int idUser);
-    List<Order> findAllByIdUserAndStatus(int idUser, String status);
+    List<Order> findAllByIdUser(@Param("idUser") String idUser);
+    List<Order> findAllByIdUserAndStatus(String idUser, String status);
 }

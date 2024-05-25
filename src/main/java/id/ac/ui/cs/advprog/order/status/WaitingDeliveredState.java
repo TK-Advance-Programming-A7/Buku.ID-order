@@ -9,6 +9,7 @@ public class WaitingDeliveredState implements State{
 
     @Override
     public void nextState(Order order) {
+        // Currently no transition to the next state from Waiting Delivered state
     }
 
     @Override

@@ -25,6 +25,9 @@ public class OrderServiceImpl implements OrderService{
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final String ORDER_NOT_FOUND = "Order with ID ";
+    private static final String NOT_FOUND = " not found";
+
     private Runnable createRunnable(Order order){
         Runnable aRunnable = new Runnable(){
             public void run(){
@@ -40,7 +43,7 @@ public class OrderServiceImpl implements OrderService{
 
     private Order findOrderById(int id) {
         return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Order with ID " + id + " not found"));
+                .orElseThrow(() -> new NoSuchElementException(ORDER_NOT_FOUND + id + NOT_FOUND));
     }
 
     public String updateNextStatus(int id_order) throws JsonProcessingException {
@@ -108,7 +111,7 @@ public class OrderServiceImpl implements OrderService{
     public String deleteOrder(int idOrder) {
         Order order = findOrderById(idOrder);
         repository.delete(order);
-        return new Gson().toJson("Delete is scd..uccessful.");
+        return new Gson().toJson("Delete is successful.");
     }
 
     private OrderItem findOrderItemByBookId(Order order, int bookId) {
@@ -168,7 +171,7 @@ public class OrderServiceImpl implements OrderService{
             order.setState(new CancelledState());
         }
         else{
-            throw new IllegalArgumentException("Order with ID " + id_order + " cannot be canceled.");
+            throw new IllegalArgumentException(ORDER_NOT_FOUND + id_order + NOT_FOUND);
         }
 
         repository.save(order);
@@ -196,7 +199,7 @@ public class OrderServiceImpl implements OrderService{
 
     private OrderItem findOrderItemById(int id) {
         return orderItemRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + NOT_FOUND));
     }
 
     public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {

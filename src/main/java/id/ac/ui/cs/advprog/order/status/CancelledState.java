@@ -9,6 +9,7 @@ public class CancelledState implements State {
 
     @Override
     public void nextState(Order order) {
+        // Currently no transition to the next state from Cancelled state
     }
 
     @Override

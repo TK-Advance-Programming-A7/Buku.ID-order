@@ -23,7 +23,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{idOrder}")
-    public ResponseEntity<?> getOrder(@PathVariable int idOrder) {
+    public ResponseEntity<String> getOrder(@PathVariable int idOrder) {
         try {
             String orderJson = orderService.getOrder(idOrder);
             return ResponseEntity.ok(orderJson);
@@ -35,7 +35,7 @@ public class OrderController {
     }
 
     @PostMapping("/add")
-    public CompletableFuture<ResponseEntity<?>> addOrder(@RequestBody HashMap<String, Order> requestBody) {
+    public CompletableFuture<ResponseEntity<String>> addOrder(@RequestBody HashMap<String, Order> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Order order = requestBody.get("order");
@@ -48,7 +48,7 @@ public class OrderController {
     }
 
     @PatchMapping("/edit")
-    public CompletableFuture<ResponseEntity<?>> editOrder(@RequestBody HashMap<String, Order> requestBody) {
+    public CompletableFuture<ResponseEntity<String>> editOrder(@RequestBody HashMap<String, Order> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Order order = requestBody.get("order");
@@ -63,7 +63,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/delete")
-    public CompletableFuture<ResponseEntity<?>> deleteOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+    public CompletableFuture<ResponseEntity<String>> deleteOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String deletedOrderJson = orderService.deleteOrder(jsonIdOrder.get("idOrder"));
@@ -77,7 +77,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{idUser}")
-    public ResponseEntity<?> getAllOrdersOfUser(@PathVariable int idUser) {
+    public ResponseEntity<String> getAllOrdersOfUser(@PathVariable int idUser) {
         try {
             String ordersJson = orderService.getAllOrdersOfUser(idUser);
             return ResponseEntity.ok(ordersJson);
@@ -87,7 +87,7 @@ public class OrderController {
     }
 
     @PostMapping("/book/add")
-    public CompletableFuture<ResponseEntity<?>> addBookToOrder(@RequestBody HashMap<String, Object> requestBody) {
+    public CompletableFuture<ResponseEntity<String>> addBookToOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 int orderId = (int) requestBody.get("idOrder");
@@ -108,7 +108,7 @@ public class OrderController {
     }
 
     @PatchMapping("/book/decrease")
-    public CompletableFuture<ResponseEntity<?>> decreaseBookInOrder(@RequestBody HashMap<String, Object> requestBody) {
+    public CompletableFuture<ResponseEntity<String>> decreaseBookInOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 int orderId = (int) requestBody.get("idOrder");
@@ -128,7 +128,7 @@ public class OrderController {
     }
 
     @PatchMapping("/next")
-    public CompletableFuture<ResponseEntity<?>> nextStatus(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+    public CompletableFuture<ResponseEntity<String>> nextStatus(@RequestBody HashMap<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String updatedOrder = orderService.updateNextStatus(jsonIdOrder.get("idOrder"));
@@ -142,7 +142,7 @@ public class OrderController {
     }
 
     @PatchMapping("/cancel")
-    public CompletableFuture<ResponseEntity<?>> cancelOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
+    public CompletableFuture<ResponseEntity<String>> cancelOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String cancelOrder = orderService.cancelOrder(jsonIdOrder.get("idOrder"));
@@ -158,7 +158,7 @@ public class OrderController {
     }
 
     @GetMapping("users/status")
-    public ResponseEntity<?> getOrderByUserIdAndStatus(@RequestParam int userId, @RequestParam String status) {
+    public ResponseEntity<String> getOrderByUserIdAndStatus(@RequestParam int userId, @RequestParam String status) {
         try {
             String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);
             return ResponseEntity.ok(ordersJson);
@@ -170,7 +170,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/book/delete")
-    public CompletableFuture<ResponseEntity<?>> deleteItemFromOrder(@RequestBody HashMap<String, Object> requestBody) {
+    public CompletableFuture<ResponseEntity<String>> deleteItemFromOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 int orderId = (int) requestBody.get("idOrder");

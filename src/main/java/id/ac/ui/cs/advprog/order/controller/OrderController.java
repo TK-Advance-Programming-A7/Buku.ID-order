@@ -137,7 +137,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> nextStatus(@RequestBody Map<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String updatedOrder = orderService.updateNextStatus(jsonIdOrder.get("idOrder"));
+                String updatedOrder = orderService.updateNextStatus(jsonIdOrder.get(ID_ORDER));
                 return ResponseEntity.ok(updatedOrder);
             } catch (NoSuchElementException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");

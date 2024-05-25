@@ -102,7 +102,9 @@ class OrderServiceTest {
         // Test
         int invalidBookId = 9999;
         assertThrows(NoSuchElementException.class, () -> {
-            orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), invalidBookId, 1);
+            if (!orders.isEmpty()) {
+                orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), invalidBookId, 1);
+            }
         });
     }
 

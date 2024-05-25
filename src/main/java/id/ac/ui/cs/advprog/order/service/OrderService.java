@@ -7,33 +7,33 @@ import id.ac.ui.cs.advprog.order.model.OrderItem;
 import java.util.List;
 
 public interface OrderService {
-    String updateNextStatus(int id_order) throws JsonProcessingException;
+    String updateNextStatus(int idOrder) throws JsonProcessingException;
 
     String findAll() throws JsonProcessingException;
 
-    String getOrder(int id_order) throws JsonProcessingException;
+    String getOrder(int idOrder) throws JsonProcessingException;
 
     String addOrder(Order order) throws JsonProcessingException;
 
-    String getOrderState(int id_order);
+    String getOrderState(int idOrder);
 
-    List<OrderItem> getOrderItemsByOrder(int order);
+    List<OrderItem> getOrderItemsByOrder(int idOrder);
 
     String editOrder(int idOrder, Order updatedOrder) throws JsonProcessingException;
 
-    String getAllOrdersOfUser(int userId) throws JsonProcessingException;
+    String getAllOrdersOfUser(int idUser) throws JsonProcessingException;
 
     String deleteOrder(int idOrder);
 
-    String addBookToOrder(int orderId, int bookId, int quantity, float price) throws JsonProcessingException;
+    String addBookToOrder(int idOrder, int idBook, int quantity, float price) throws JsonProcessingException;
 
-    String decreaseBookInOrder(int orderId, int bookId, int quantity) throws JsonProcessingException;
+    String decreaseBookInOrder(int idOrder, int idBook, int quantity) throws JsonProcessingException;
 
-    String cancelOrder(int id_order) throws JsonProcessingException;
+    String cancelOrder(int idOrder) throws JsonProcessingException;
 
-    String deleteItemFromOrder(int orderId, int itemId) throws JsonProcessingException;
+    String deleteItemFromOrder(int idOrder, int idItem) throws JsonProcessingException;
 
-    String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException;
+    String getOrdersByUserIdAndStatus(int idUser, String status) throws JsonProcessingException;
 
 
 }

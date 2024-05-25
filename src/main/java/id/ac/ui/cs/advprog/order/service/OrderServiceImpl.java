@@ -35,8 +35,8 @@ public class OrderServiceImpl implements OrderService{
                 .orElseThrow(() -> new NoSuchElementException(ORDER_NOT_FOUND + id + NOT_FOUND));
     }
 
-    public String updateNextStatus(int id_order) throws JsonProcessingException {
-        Order order = findOrderById(id_order);
+    public String updateNextStatus(int idOrder) throws JsonProcessingException {
+        Order order = findOrderById(idOrder);
 
         order.nextStatus();
         repository.save(order);
@@ -50,8 +50,8 @@ public class OrderServiceImpl implements OrderService{
         return objectMapper.writeValueAsString(orders);
     }
 
-    public String getOrder(int id_order) throws JsonProcessingException {
-        Order order = findOrderById(id_order);
+    public String getOrder(int idOrder) throws JsonProcessingException {
+        Order order = findOrderById(idOrder);
         order.setStatus(order.getStatus());
         return objectMapper.writeValueAsString(order);
     }
@@ -64,14 +64,14 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    public String getOrderState(int id_order) {
-        Order order = findOrderById(id_order);
+    public String getOrderState(int idOrder) {
+        Order order = findOrderById(idOrder);
         String state = new Gson().toJson(order.getState().toString());
         return state;
     }
 
-    public List<OrderItem> getOrderItemsByOrder(int order) {
-        return orderItemRepository.findByOrder(repository.findById(order).orElseThrow(() -> new NoSuchElementException(ORDER_NOT_FOUND + order + NOT_FOUND)));
+    public List<OrderItem> getOrderItemsByOrder(int idOrder) {
+        return orderItemRepository.findByOrder(repository.findById(idOrder).orElseThrow(() -> new NoSuchElementException(ORDER_NOT_FOUND + idOrder + NOT_FOUND)));
     }
 
 
@@ -154,17 +154,17 @@ public class OrderServiceImpl implements OrderService{
         return objectMapper.writeValueAsString(order);
     }
 
-    public String cancelOrder(int id_order) throws JsonProcessingException {
-        Order order = findOrderById(id_order);
+    public String cancelOrder(int idOrder) throws JsonProcessingException {
+        Order order = findOrderById(idOrder);
         if(order.isCancelable()){
             order.setState(new CancelledState());
         }
         else{
-            throw new IllegalArgumentException(ORDER_NOT_FOUND + id_order + NOT_FOUND);
+            throw new IllegalArgumentException(ORDER_NOT_FOUND + idOrder + NOT_FOUND);
         }
 
         repository.save(order);
-        return getOrder(id_order);
+        return getOrder(idOrder);
     }
 
     @Transactional

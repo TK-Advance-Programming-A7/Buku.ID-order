@@ -14,7 +14,7 @@ public class DataSeedService {
 
     private final OrderService orderService;
 
-    private static final int numberOfOrders = 1000;
+    private static final int NUMBER_OF_ORDERS = 1000;
 
     @Autowired
     public DataSeedService(OrderService orderService) {
@@ -26,7 +26,7 @@ public class DataSeedService {
         Faker faker = new Faker();
 
         try {
-            for (int i = 0; i < numberOfOrders; i++) {
+            for (int i = 0; i < NUMBER_OF_ORDERS; i++) {
                 Order order = new Order();
                 order.setIdUser(faker.number().numberBetween(100, 999)); // Contoh ID pengguna 3 digit
                 order.setAddress(faker.address().fullAddress());

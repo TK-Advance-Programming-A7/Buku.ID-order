@@ -8,8 +8,8 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import lombok.ToString;
 
-
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 public class OrderItem {
 
@@ -32,11 +32,20 @@ public class OrderItem {
     @Column(name = "id_orderItem")
     private int idOrderItem;
 
-    @Setter @Getter @JsonBackReference @EqualsAndHashCode.Exclude
-    @ManyToOne @ToString.Exclude
+    @Setter
+    @Getter
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
+    @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "id_order")
     private Order order;
 
+    /**
+     * Default constructor for JPA.
+     * JPA requires a no-argument constructor for entity classes.
+     */
     public OrderItem() {
+        // No-argument constructor required by JPA
     }
 }

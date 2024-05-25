@@ -88,32 +88,15 @@ public class Order {
     }
 
     public void setStatus(String status) {
-        switch (status) {
-            case "Waiting Checkout" -> {
-                if (!(this.state instanceof WaitingCheckoutState)) {
-                    this.state = new WaitingCheckoutState();
-                }
-            }
-            case "Waiting Payment" -> {
-                if (!(this.state instanceof WaitingPaymentState)) {
-                    this.state = new WaitingPaymentState();
-                }
-            }
-            case "Cancelled" -> {
-                if (!(this.state instanceof CancelledState)) {
-                    this.state = new CancelledState();
-                }
-            }
-            case "Waiting Delivered" -> {
-                if (!(this.state instanceof WaitingDeliveredState)) {
-                    this.state = new WaitingDeliveredState();
-                }
-            }
-            case null, default -> throw new IllegalArgumentException("Invalid state value: " + status);
-        }
+        this.state = switch (status) {
+            case "Waiting Checkout" -> this.state instanceof WaitingCheckoutState ? this.state : new WaitingCheckoutState();
+            case "Waiting Payment" -> this.state instanceof WaitingPaymentState ? this.state : new WaitingPaymentState();
+            case "Cancelled" -> this.state instanceof CancelledState ? this.state : new CancelledState();
+            case "Waiting Delivered" -> this.state instanceof WaitingDeliveredState ? this.state : new WaitingDeliveredState();
+            default -> throw new IllegalArgumentException("Invalid state value: " + status);
+        };
         this.status = this.state.toString();
     }
-
 
     public void setState(State state) {
         this.state = state;

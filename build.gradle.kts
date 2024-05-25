@@ -42,31 +42,43 @@ repositories {
 }
 
 dependencies {
+    // Database dependencies
     implementation("org.postgresql:postgresql:42.2.24")
     implementation("javax.persistence:javax.persistence-api:2.2")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    testImplementation("com.h2database:h2")
+
+    // Web dependencies
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+    // JSON processing
+    implementation("com.google.code.gson:gson:2.9.1")
+
+    // Spring Boot DevTools
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // Spring Boot Actuator and Micrometer
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
+    // Testing dependencies
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
     testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.google.code.gson:gson:2.9.1")
-    testImplementation("com.h2database:h2")
 
-    // New dependencies
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-registry-prometheus")
-
-    // seed data
+    // Seed data
     implementation("net.datafaker:datafaker:1.5.0")
 }
+
 
 tasks.register<Test>("unitTest") {
     description = "Runs unit tests."

@@ -82,7 +82,7 @@ public class OrderControllerTest {
 
         when(orderService.getOrder(orderId)).thenReturn(orderJson);
 
-        ResponseEntity<?> responseEntity = orderController.getOrder(orderId);
+        ResponseEntity<String> responseEntity = orderController.getOrder(orderId);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(orderJson, responseEntity.getBody());
@@ -93,7 +93,7 @@ public class OrderControllerTest {
     public void getOrderNotExist() throws ExecutionException, InterruptedException {
         int nonExistentOrderId = 999;
 
-        ResponseEntity<?> responseEntity = orderController.getOrder(nonExistentOrderId);
+        ResponseEntity<String> responseEntity = orderController.getOrder(nonExistentOrderId);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Order not found.", responseEntity.getBody());
@@ -108,9 +108,9 @@ public class OrderControllerTest {
         String expectedResponse = "Deleted successfully";
         when(orderService.deleteOrder(1)).thenReturn(expectedResponse);
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteOrder(jsonIdOrder);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.deleteOrder(jsonIdOrder);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse, responseEntity.getBody());
@@ -123,9 +123,9 @@ public class OrderControllerTest {
 
         when(orderService.deleteOrder(999)).thenThrow(new NoSuchElementException("Order with the given ID not found"));
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteOrder(jsonIdOrder);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.deleteOrder(jsonIdOrder);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Order with the given ID not found.", responseEntity.getBody());
@@ -135,7 +135,7 @@ public class OrderControllerTest {
     public void testGetAllOrdersOfUser() throws Exception {
         int userId = 1;
 
-        ResponseEntity<?> responseEntity = orderController.getAllOrdersOfUser(userId);
+        ResponseEntity<String> responseEntity = orderController.getAllOrdersOfUser(userId);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(orderJson, responseEntity.getBody());
@@ -147,7 +147,7 @@ public class OrderControllerTest {
 
         when(orderService.getAllOrdersOfUser(nonExistentUserId)).thenReturn("[]");
 
-        ResponseEntity<?> responseEntity = orderController.getAllOrdersOfUser(nonExistentUserId);
+        ResponseEntity<String> responseEntity = orderController.getAllOrdersOfUser(nonExistentUserId);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("[]", responseEntity.getBody());
@@ -166,9 +166,9 @@ public class OrderControllerTest {
         HashMap<String, Integer> jsonIdOrder = new HashMap<>();
         jsonIdOrder.put("idOrder", idOrder);
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.nextStatus(jsonIdOrder);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.nextStatus(jsonIdOrder);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -185,9 +185,9 @@ public class OrderControllerTest {
         jsonIdOrder.put("idOrder", nonExistentIdOrder);
 
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.nextStatus(jsonIdOrder);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.nextStatus(jsonIdOrder);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -205,9 +205,9 @@ public class OrderControllerTest {
         String expectedResponse = "Item deleted successfully";
         when(orderService.deleteItemFromOrder(1, 1)).thenReturn(expectedResponse);
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse, responseEntity.getBody());
@@ -220,7 +220,7 @@ public class OrderControllerTest {
 
         when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenReturn(orderJson);
 
-        ResponseEntity<?> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
+        ResponseEntity<String> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(orderJson, responseEntity.getBody());
@@ -233,7 +233,7 @@ public class OrderControllerTest {
 
         when(orderService.getOrdersByUserIdAndStatus(userId, status)).thenThrow(new NoSuchElementException());
 
-        ResponseEntity<?> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
+        ResponseEntity<String> responseEntity = orderController.getOrderByUserIdAndStatus(userId, status);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("User ID or status not provided.", responseEntity.getBody());
@@ -247,9 +247,9 @@ public class OrderControllerTest {
 
         when(orderService.deleteItemFromOrder(1, 999)).thenThrow(new NoSuchElementException());
 
-        CompletableFuture<ResponseEntity<?>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.deleteItemFromOrder(requestBody);
 
-        ResponseEntity<?> responseEntity = responseEntityFuture.get();
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Order or Item with the given ID not found.", responseEntity.getBody());

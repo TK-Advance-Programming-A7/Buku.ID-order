@@ -1,70 +1,82 @@
 package id.ac.ui.cs.advprog.order.model;
 
-import id.ac.ui.cs.advprog.order.status.CancelledState;
-import id.ac.ui.cs.advprog.order.status.State;
-import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
+import com.fasterxml.jackson.annotation.*;
+import id.ac.ui.cs.advprog.order.status.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.*;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+@Getter
+@Setter
 @Entity
-@Table(name = "Orders")
+@Table(name = "Orders", indexes = {
+        @Index(name = "idx_user_id", columnList = "id_user")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idOrder")
 public class Order {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_order")
     private int idOrder;
 
-    @Getter
     @Column(name = "id_user")
     private int idUser;
 
-    @Getter
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    private String orderDate;
 
-    @Getter
-    @Column(name = "status")
-    private String status;
 
-    @Getter 
     @Column(name = "address")
     private String address;
 
-    @Getter
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude @JsonManagedReference @EqualsAndHashCode.Exclude @Fetch(value = FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> items = new ArrayList<>();
 
-    @Getter
     @Column(name = "total_price")
     private float totalPrice;
 
-    @Setter
     @Column(name = "cancelable")
     private boolean cancelable;
 
-    @Getter
+    @Column(name = "status")
+    private String status;
+
     @Transient
     private State state;
 
+    public Order() {
+
+    }
+
     public Order(int idUser) {
         this.idUser = idUser;
-        this.orderDate = LocalDateTime.now();
+        this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());
+        this.setTotalPrice();
     }
 
     public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
         this.idUser = idUser;
-        this.orderDate = LocalDateTime.now(); 
+        this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());
         this.items = newItems;
+        for(OrderItem item: items){
+            item.setOrder(this);
+        }
         this.address = address;
+        this.setTotalPrice();
     }
 
     public void setTotalPrice() {
@@ -75,17 +87,42 @@ public class Order {
         this.totalPrice = total;
     }
 
-    public void setStatus(State state){
-        this.state = state;
-        this.status = state.toString();
+    public void setStatus(String status) {
+        switch (status) {
+            case "Waiting Checkout" -> {
+                if (!(this.state instanceof WaitingCheckoutState)) {
+                    this.state = new WaitingCheckoutState();
+                }
+            }
+            case "Waiting Payment" -> {
+                if (!(this.state instanceof WaitingPaymentState)) {
+                    this.state = new WaitingPaymentState();
+                }
+            }
+            case "Cancelled" -> {
+                if (!(this.state instanceof CancelledState)) {
+                    this.state = new CancelledState();
+                }
+            }
+            case "Waiting Delivered" -> {
+                if (!(this.state instanceof WaitingDeliveredState)) {
+                    this.state = new WaitingDeliveredState();
+                }
+            }
+            case null, default -> throw new IllegalArgumentException("Invalid state value: " + status);
+        }
+        this.status = this.state.toString();
     }
-    
+
+
     public void setState(State state) {
-        this.setStatus(state); 
+        this.state = state;
+        this.setStatus(state.toString());
         this.cancelable = state.isCancelable();
     }
 
     public void nextStatus(){
+        this.setStatus(this.status);
         state.nextState(this);
         setState(state);
     }

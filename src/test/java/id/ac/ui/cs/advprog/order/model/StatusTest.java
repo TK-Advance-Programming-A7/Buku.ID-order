@@ -2,10 +2,10 @@ package id.ac.ui.cs.advprog.order.model;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StatusTest {
+class StatusTest {
 
     @Test
-    public void testAllStatusStateAndCancelable() throws Exception {
+    void testAllStatusStateAndCancelable() {
         Order order = new Order(1);
         assertEquals("Waiting Checkout", order.getStatus());
         assertTrue(order.isCancelable());

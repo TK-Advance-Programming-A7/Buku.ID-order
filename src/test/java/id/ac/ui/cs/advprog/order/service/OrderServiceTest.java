@@ -5,7 +5,6 @@ import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.model.OrderItem;
 import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.repository.OrderRepository;
-import id.ac.ui.cs.advprog.order.status.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +37,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         // Setup dummy order items
-        orderItems = new ArrayList<OrderItem>();
+        orderItems = new ArrayList<>();
         OrderItem item1 = new OrderItem();
         item1.setIdBook(1);
         item1.setAmount(2);
@@ -72,10 +71,10 @@ class OrderServiceTest {
     @Test
     void addBookToOrder_ValidBookId_BookAddedSuccessfully() throws JsonProcessingException {
         // Mock repository
-        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
-        String result = orderService.addBookToOrder(orders.get(0).getIdOrder(), 1, 1, 10.99f);
+        String result = orderService.addBookToOrder(orders.getFirst().getIdOrder(), 1, 1, 10.99f);
 
         assertNotNull(result);
         
@@ -98,20 +97,20 @@ class OrderServiceTest {
     @Test
     void decreaseBookInOrder_InvalidBookId_ExceptionThrown() {
         // Mock repository
-        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
         assertThrows(NoSuchElementException.class, () -> {
-            orderService.decreaseBookInOrder(orders.get(0).getIdOrder(), 9999, 1);
+            orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), 9999, 1);
         });
     }
 
     @Test
     void updateNextStatus_ValidOrder_OrderStatusUpdatedSuccessfully() throws JsonProcessingException {
-        when(orderRepository.findById(orders.get(0).getIdOrder())).thenReturn(Optional.of(orders.get(0)));//        when(orderRepository.findAll()).thenReturn(orders);
-        when(orderRepository.save(any(Order.class))).thenReturn(orders.get(0));
-        orderService.updateNextStatus(orders.get(0).getIdOrder());
-        assertEquals("Waiting Payment", orders.get(0).getState().toString()); // Expecting status to be updated to "Waiting Payment"
+        when(orderRepository.findById(orders.getFirst().getIdOrder())).thenReturn(Optional.of(orders.getFirst()));
+        when(orderRepository.save(any(Order.class))).thenReturn(orders.getFirst());
+        orderService.updateNextStatus(orders.getFirst().getIdOrder());
+        assertEquals("Waiting Payment", orders.getFirst().getState().toString()); // Expecting status to be updated to "Waiting Payment"
     }
 
 
@@ -131,10 +130,10 @@ class OrderServiceTest {
     @Test
     void getOrder_ValidOrderId_ReturnsOrderAsJson() throws JsonProcessingException {
         // Mock repository
-        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
-        String result = orderService.getOrder(orders.get(0).getIdOrder());
+        String result = orderService.getOrder(orders.getFirst().getIdOrder());
 
         assertNotNull(result);
         assertTrue(result.contains("Depok")); // Expecting order with address "Depok" to be present in the JSON
@@ -154,10 +153,10 @@ class OrderServiceTest {
     @Test
     void addOrder_ValidOrder_OrderAddedSuccessfully() throws JsonProcessingException {
         // Mock repository
-        when(orderRepository.save(any())).thenReturn(orders.get(0));
+        when(orderRepository.save(any())).thenReturn(orders.getFirst());
 
         // Test
-        String result = orderService.addOrder(orders.get(0));
+        String result = orderService.addOrder(orders.getFirst());
 
         assertNotNull(result);
         
@@ -167,10 +166,10 @@ class OrderServiceTest {
     @Test
     void getOrderStatus_ValidOrderId_ReturnsOrderStatus() {
         // Mock repository
-        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
-        String result = orderService.getOrderState(orders.get(0).getIdOrder());
+        String result = orderService.getOrderState(orders.getFirst().getIdOrder());
 
         assertNotNull(result);
         assertEquals("\"Waiting Checkout\"", result); // Expecting status to be "WaitingCheckout"
@@ -190,15 +189,15 @@ class OrderServiceTest {
     @Test
     void cancelOrder_ValidOrderId_OrderCancelledSuccessfully() throws JsonProcessingException {
         // Mock repository
-        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.get(0)));
-        when(orderRepository.save(any())).thenReturn(orders.get(0));
+        when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
+        when(orderRepository.save(any())).thenReturn(orders.getFirst());
 
         // Test
-        String result = orderService.cancelOrder(orders.get(0).getIdOrder());
+        String result = orderService.cancelOrder(orders.getFirst().getIdOrder());
 
         assertNotNull(result);
         
-        assertEquals("Cancelled", orders.get(0).getState().toString()); // Expecting status to be "Cancelled"
+        assertEquals("Cancelled", orders.getFirst().getState().toString()); // Expecting status to be "Cancelled"
     }
 
     @Test

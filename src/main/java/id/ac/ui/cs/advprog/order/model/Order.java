@@ -67,7 +67,7 @@ public class Order {
         this.setTotalPrice();
     }
 
-    public Order(int idUser, ArrayList<OrderItem> newItems, String address) {
+    public Order(int idUser, List<OrderItem> newItems, String address) {
         this.idUser = idUser;
         this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());

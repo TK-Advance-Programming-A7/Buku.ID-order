@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-public class OrderControllerTest {
+class OrderControllerTest {
 
     @InjectMocks
     private OrderController orderController;
@@ -30,7 +30,7 @@ public class OrderControllerTest {
     @Mock
     private OrderServiceImpl orderService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Order order;
     private String orderJson;
@@ -38,7 +38,7 @@ public class OrderControllerTest {
     private ArrayList<OrderItem> orderItems;
 
     @BeforeEach
-    public void setup() throws JsonProcessingException {
+    void setup() throws JsonProcessingException {
         MockitoAnnotations.initMocks(this);
 
         // Setup order
@@ -77,7 +77,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testGetOrder() throws Exception {
+    void testGetOrder() throws Exception {
         int orderId = 1;
 
         when(orderService.getOrder(orderId)).thenReturn(orderJson);
@@ -90,7 +90,7 @@ public class OrderControllerTest {
 
 
     @Test
-    public void getOrderNotExist() throws ExecutionException, InterruptedException {
+    public void getOrderNotExist() {
         int nonExistentOrderId = 999;
 
         ResponseEntity<String> responseEntity = orderController.getOrder(nonExistentOrderId);
@@ -101,7 +101,7 @@ public class OrderControllerTest {
 
 
     @Test
-    public void testDeleteOrder() throws Exception {
+    void testDeleteOrder() throws Exception {
         HashMap<String, Integer> jsonIdOrder = new HashMap<>();
         jsonIdOrder.put("idOrder", 1);
 
@@ -117,7 +117,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testDeleteOrderNotExist() throws ExecutionException, InterruptedException {
+    void testDeleteOrderNotExist() throws ExecutionException, InterruptedException {
         HashMap<String, Integer> jsonIdOrder = new HashMap<>();
         jsonIdOrder.put("idOrder", 999);
 
@@ -132,7 +132,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testGetAllOrdersOfUser() throws Exception {
+    void testGetAllOrdersOfUser(){
         int userId = 1;
 
         ResponseEntity<String> responseEntity = orderController.getAllOrdersOfUser(userId);
@@ -142,7 +142,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testGetAllOrdersOfUserNotExist() throws Exception {
+    void testGetAllOrdersOfUserNotExist() throws Exception {
         int nonExistentUserId = 999;
 
         when(orderService.getAllOrdersOfUser(nonExistentUserId)).thenReturn("[]");
@@ -154,7 +154,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testNextStatusOrderExists() throws Exception {
+    void testNextStatusOrderExists() throws Exception {
         int idOrder = 1;
 
         Order expectedOrder = new Order();
@@ -176,7 +176,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testNextStatusOrderDoesNotExist() throws Exception {
+    void testNextStatusOrderDoesNotExist() throws Exception {
         int nonExistentIdOrder = 1000;
 
         when(orderService.updateNextStatus(nonExistentIdOrder)).thenThrow(new NoSuchElementException());
@@ -195,9 +195,8 @@ public class OrderControllerTest {
     }
 
 
-
     @Test
-    public void testDeleteItemFromOrder() throws Exception {
+    void testDeleteItemFromOrder() throws Exception {
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("idOrder", 1);
         requestBody.put("idOrderItem", 1);
@@ -214,7 +213,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testGetOrderByUserIdAndStatus() throws Exception {
+    void testGetOrderByUserIdAndStatus() throws Exception {
         int userId = 1;
         String status = "Waiting Checkout";
 
@@ -227,7 +226,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testGetOrderByUserIdAndStatusFailed() throws Exception {
+    void testGetOrderByUserIdAndStatusFailed() throws Exception {
         int userId = 9999;
         String status = "Failed";
 
@@ -240,7 +239,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testDeleteItemFromOrderNotFound() throws Exception {
+    void testDeleteItemFromOrderNotFound() throws Exception {
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("idOrder", 1);
         requestBody.put("idOrderItem", 999); // Assuming this item doesn't exist

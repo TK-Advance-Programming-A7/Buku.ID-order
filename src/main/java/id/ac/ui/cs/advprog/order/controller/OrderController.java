@@ -19,10 +19,14 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/v1/order")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
-
     private static final String ID_ORDER = "idOrder";
+
+    private final OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("/{idOrder}")
     public ResponseEntity<String> getOrder(@PathVariable int idOrder) {

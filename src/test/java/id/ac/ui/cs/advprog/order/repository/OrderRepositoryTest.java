@@ -45,46 +45,46 @@ class OrderRepositoryTest {
 
     @Test
     void testSaveCreate() {
-        Order order = orders.get(0);
+        Order orderTest = orders.getFirst();
 
-        Mockito.when(orderRepository.save(order)).thenReturn(order);
-        Mockito.when(orderRepository.findById(order.getIdOrder())).thenReturn(Optional.of(order));
+        Mockito.when(orderRepository.save(orderTest)).thenReturn(orderTest);
+        Mockito.when(orderRepository.findById(orderTest.getIdOrder())).thenReturn(Optional.of(orderTest));
 
-        Order result = orderRepository.save(order);
+        Order result = orderRepository.save(orderTest);
 
-        Optional<Order> findResult = orderRepository.findById(orders.get(0).getIdOrder());
+        Optional<Order> findResult = orderRepository.findById(orders.getFirst().getIdOrder());
 
-        assertEquals(order.getIdOrder(), result.getIdOrder());
-        assertEquals(order.getIdOrder(), findResult.get().getIdOrder());
-        assertEquals(order.getIdUser(), findResult.get().getIdUser());
-        assertEquals(order.getOrderDate(), findResult.get().getOrderDate());
-        assertEquals(order.getStatus(), findResult.get().getStatus());
-        assertEquals(order.getAddress(), findResult.get().getAddress());
-        assertEquals(order.isCancelable(), findResult.get().isCancelable());
-        assertEquals(order.getTotalPrice(), findResult.get().getTotalPrice());
-        assertSame(order.getItems(), findResult.get().getItems());
+        assertEquals(orderTest.getIdOrder(), result.getIdOrder());
+        assertEquals(orderTest.getIdOrder(), findResult.get().getIdOrder());
+        assertEquals(orderTest.getIdUser(), findResult.get().getIdUser());
+        assertEquals(orderTest.getOrderDate(), findResult.get().getOrderDate());
+        assertEquals(orderTest.getStatus(), findResult.get().getStatus());
+        assertEquals(orderTest.getAddress(), findResult.get().getAddress());
+        assertEquals(orderTest.isCancelable(), findResult.get().isCancelable());
+        assertEquals(orderTest.getTotalPrice(), findResult.get().getTotalPrice());
+        assertSame(orderTest.getItems(), findResult.get().getItems());
     }
 
     @Test
     void testSaveUpdate() {
-        Order order = orders.get(0);
+        Order orderTest = orders.getFirst();
 
-        order.setAddress("Jl. Pepaya no.33");
-        order.setStatus("Waiting Delivered");
+        orderTest.setAddress("Jl. Pepaya no.33");
+        orderTest.setStatus("Waiting Delivered");
 
-        Mockito.when(orderRepository.save(order)).thenReturn(order);
-        Mockito.when(orderRepository.findById(order.getIdOrder())).thenReturn(Optional.of(order));
+        Mockito.when(orderRepository.save(orderTest)).thenReturn(orderTest);
+        Mockito.when(orderRepository.findById(orderTest.getIdOrder())).thenReturn(Optional.of(orderTest));
 
-        orderRepository.save(order);
+        orderRepository.save(orderTest);
 
-        Optional<Order> findResultOptional = orderRepository.findById(order.getIdOrder());
+        Optional<Order> findResultOptional = orderRepository.findById(orderTest.getIdOrder());
         Order findResult = findResultOptional.get();
 
-        assertEquals(order.getIdOrder(), findResult.getIdOrder());
-        assertEquals(order.getAddress(), findResult.getAddress());
-        assertEquals(order.getStatus(), findResult.getStatus());
-        assertEquals(order.isCancelable(), findResult.isCancelable());
-        assertEquals(order.getTotalPrice(), findResult.getTotalPrice());
+        assertEquals(orderTest.getIdOrder(), findResult.getIdOrder());
+        assertEquals(orderTest.getAddress(), findResult.getAddress());
+        assertEquals(orderTest.getStatus(), findResult.getStatus());
+        assertEquals(orderTest.isCancelable(), findResult.isCancelable());
+        assertEquals(orderTest.getTotalPrice(), findResult.getTotalPrice());
     }
 
     @Test
@@ -116,12 +116,12 @@ class OrderRepositoryTest {
     @Test
     void testFindAllByUserIfUserCorrect() {
         Mockito.when(orderRepository.save(order)).thenReturn(order);
-        Mockito.when(orderRepository.findAllByIdUser(orders.get(0).getIdUser())).thenReturn(orders);
+        Mockito.when(orderRepository.findAllByIdUser(orders.getFirst().getIdUser())).thenReturn(orders);
 
         orderRepository.saveAll(orders);
 
         List <Order> orderList = orderRepository.findAllByIdUser(
-                orders.get(0).getIdUser());
+                orders.getFirst().getIdUser());
         assertEquals(orders.size(), orderList.size());
     }
 

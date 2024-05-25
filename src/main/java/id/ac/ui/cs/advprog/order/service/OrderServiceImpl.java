@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService{
 
 
     public String findAll() throws JsonProcessingException {
-        List<Order> orders = (List<Order>) repository.findAll();
+        List<Order> orders = repository.findAll();
         orders.forEach(order -> order.setStatus(order.getStatus()));
         return objectMapper.writeValueAsString(orders);
     }
@@ -66,8 +66,7 @@ public class OrderServiceImpl implements OrderService{
 
     public String getOrderState(int idOrder) {
         Order order = findOrderById(idOrder);
-        String state = new Gson().toJson(order.getState().toString());
-        return state;
+        return new Gson().toJson(order.getState().toString());
     }
 
     public List<OrderItem> getOrderItemsByOrder(int idOrder) {

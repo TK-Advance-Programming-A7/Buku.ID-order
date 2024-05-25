@@ -72,7 +72,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> deleteOrder(@RequestBody Map<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String deletedOrderJson = orderService.deleteOrder(jsonIdOrder.get("idOrder"));
+                String deletedOrderJson = orderService.deleteOrder(jsonIdOrder.get(ID_ORDER));
                 return ResponseEntity.ok(deletedOrderJson);
             } catch (NoSuchElementException e) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order with the given ID not found.");

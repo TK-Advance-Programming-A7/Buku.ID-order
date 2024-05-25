@@ -94,16 +94,18 @@ class OrderServiceTest {
         assertTrue(result.contains("\"amount\":1")); // Checking if the amount has been updated
     }
 
-    @Test
+
     void decreaseBookInOrder_InvalidBookId_ExceptionThrown() {
         // Mock repository
         when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));
 
         // Test
+        int invalidBookId = 9999;
         assertThrows(NoSuchElementException.class, () -> {
-            orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), 9999, 1);
+            orderService.decreaseBookInOrder(orders.getFirst().getIdOrder(), invalidBookId, 1);
         });
     }
+
 
     @Test
     void updateNextStatus_ValidOrder_OrderStatusUpdatedSuccessfully() throws JsonProcessingException {

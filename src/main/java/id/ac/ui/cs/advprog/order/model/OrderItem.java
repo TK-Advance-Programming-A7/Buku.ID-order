@@ -1,22 +1,17 @@
 package id.ac.ui.cs.advprog.order.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
-import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
 import lombok.ToString;
-import org.antlr.v4.runtime.misc.NotNull;
-
-import java.util.Date;
 
 
 @Getter @Setter
 @Entity
-public abstract class OrderItem implements OrderItemRepository {
+public class OrderItem {
 
     @Column(name = "id_book")
     private int idBook;

@@ -3,11 +3,10 @@ package id.ac.ui.cs.advprog.order.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.model.OrderItem;
-import id.ac.ui.cs.advprog.order.repository.OrderRepository;
 
 import java.util.List;
 
-public interface OrderService extends OrderRepository {
+public interface OrderService {
     String updateNextStatus(int id_order) throws JsonProcessingException;
 
     String findAll() throws JsonProcessingException;
@@ -38,4 +37,3 @@ public interface OrderService extends OrderRepository {
 
 
 }
-

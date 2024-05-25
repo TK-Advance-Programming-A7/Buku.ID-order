@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/order/data-seed")
-public class DataSeedController extends DataSeedService {
+public class DataSeedController {
 
     private final DataSeedService dataSeedService;
 
@@ -34,5 +34,4 @@ public class DataSeedController extends DataSeedService {
         }
     }
 }
-
 

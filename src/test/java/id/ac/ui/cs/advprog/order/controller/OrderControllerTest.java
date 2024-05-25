@@ -90,7 +90,7 @@ class OrderControllerTest {
 
 
     @Test
-    public void getOrderNotExist() {
+    void getOrderNotExist() {
         int nonExistentOrderId = 999;
 
         ResponseEntity<String> responseEntity = orderController.getOrder(nonExistentOrderId);

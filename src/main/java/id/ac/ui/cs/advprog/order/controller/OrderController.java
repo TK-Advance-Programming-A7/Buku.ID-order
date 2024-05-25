@@ -22,6 +22,8 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    private static final String ID_ORDER = "idOrder";
+
     @GetMapping("/{idOrder}")
     public ResponseEntity<String> getOrder(@PathVariable int idOrder) {
         try {
@@ -90,7 +92,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> addBookToOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                int orderId = (int) requestBody.get("idOrder");
+                int orderId = (int) requestBody.get(ID_ORDER);
                 int bookId = (int) requestBody.get("idBook");
                 int quantity = (int) requestBody.get("quantity");
                 float price = Float.parseFloat(requestBody.get("price").toString());
@@ -111,7 +113,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> decreaseBookInOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                int orderId = (int) requestBody.get("idOrder");
+                int orderId = (int) requestBody.get(ID_ORDER);
                 int bookId = (int) requestBody.get("idBook");
                 int quantity = (int) requestBody.get("quantity");
 
@@ -145,7 +147,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> cancelOrder(@RequestBody HashMap<String, Integer> jsonIdOrder) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String cancelOrder = orderService.cancelOrder(jsonIdOrder.get("idOrder"));
+                String cancelOrder = orderService.cancelOrder(jsonIdOrder.get(ID_ORDER));
                 return ResponseEntity.ok(cancelOrder);
             } catch (NoSuchElementException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order.");
@@ -173,7 +175,7 @@ public class OrderController {
     public CompletableFuture<ResponseEntity<String>> deleteItemFromOrder(@RequestBody HashMap<String, Object> requestBody) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                int orderId = (int) requestBody.get("idOrder");
+                int orderId = (int) requestBody.get(ID_ORDER);
                 int itemId = (int) requestBody.get("idOrderItem");
 
                 String deletedItemFromOrderJson = orderService.deleteItemFromOrder(orderId, itemId);

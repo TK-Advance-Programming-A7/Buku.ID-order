@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     public List<OrderItem> getOrderItemsByOrder(int order) {
-        return orderItemRepository.findByOrder(repository.findById(order).orElseThrow(() -> new NoSuchElementException("Order with ID " + order + " not found")));
+        return orderItemRepository.findByOrder(repository.findById(order).orElseThrow(() -> new NoSuchElementException(ORDER_NOT_FOUND + order + NOT_FOUND)));
     }
 
 

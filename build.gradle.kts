@@ -13,6 +13,15 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.sonarqube") version "4.4.1.3373"
+}
+
+sonar {
+  properties {
+    property("sonar.projectKey", "tk-a7-adpro_order")
+    property("sonar.organization", "tk-a7-adpro")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -33,6 +42,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.postgresql:postgresql:42.2.24")
     implementation("javax.persistence:javax.persistence-api:2.2")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
@@ -46,6 +56,16 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.google.code.gson:gson:2.9.1")
+    testImplementation("com.h2database:h2")
+
+    // New dependencies
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
+    // seed data
+    implementation("net.datafaker:datafaker:1.5.0")
 }
 
 tasks.register<Test>("unitTest") {
@@ -68,6 +88,7 @@ tasks.register<Test>("functionalTest") {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    jvmArgs("--add-opens", "java.base/java.time=ALL-UNNAMED")
 }
 
 tasks.test{

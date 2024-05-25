@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    public String getAllOrdersOfUser(int userId) throws JsonProcessingException {
+    public String getAllOrdersOfUser(String userId) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUser(userId);
         orders.forEach(order -> order.setStatus(order.getStatus()));  // This reinitializes the transient State based on the persistent Status
 
@@ -190,7 +190,7 @@ public class OrderServiceImpl implements OrderService{
                 .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + NOT_FOUND));
     }
 
-    public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
+    public String getOrdersByUserIdAndStatus(String userId, String status) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
         orders.forEach(order -> order.setStatus(order.getStatus()));
         return objectMapper.writeValueAsString(orders);

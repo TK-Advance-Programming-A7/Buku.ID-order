@@ -7,6 +7,9 @@
 # Buku.ID-order
 
 [![](https://github.com/TK-Advance-Programming-A7/Buku.ID-order/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/TK-Advance-Programming-A7/Buku.ID-order/actions/workflows/ci-cd.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tk-a7-adpro_order&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tk-a7-adpro_order)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tk-a7-adpro_order&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tk-a7-adpro_order)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tk-a7-adpro_order&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=tk-a7-adpro_order)
 
 Buku.ID-order is the ordering service for Buku.ID, an e-commerce platform specializing in books. This service manages everything from maintaining order records, managing shopping carts, to processing checkouts and tracking order history.
 

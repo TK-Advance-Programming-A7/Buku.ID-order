@@ -109,15 +109,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install SSH client
-        run: sudo apt-get install openssh-client
+        run: sudo apt-get install -y openssh-client
 
-      - name: create ssh key
-        run: echo "${{ secrets.SSH_KEY }}" > ssh-key.pem && cat ssh-key.pem
+      - name: Create SSH key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ssh-key.pem
+          chmod 400 ssh-key.pem
 
-      - name: update permission
-        run: chmod 400 ssh-key.pem
       - name: Deploy to GCP
         run: |
+          scp -o StrictHostKeyChecking=no -i ssh-key.pem -r ./docker-compose.yml ./monitoring ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_STATIC_IP }}:~/
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_STATIC_IP }} "
             sudo docker container rm -f ${{ secrets.CONTAINER_NAME }} || true &&
             sudo docker image rm -f ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} || true &&

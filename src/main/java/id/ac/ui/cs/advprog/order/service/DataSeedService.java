@@ -3,7 +3,6 @@ package id.ac.ui.cs.advprog.order.service;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
 import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ public class DataSeedService {
 
     private static final int NUMBER_OF_ORDERS = 1000;
 
-    @Autowired
     public DataSeedService(OrderService orderService) {
         this.orderService = orderService;
     }

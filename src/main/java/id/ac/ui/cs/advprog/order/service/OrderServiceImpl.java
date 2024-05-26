@@ -7,7 +7,6 @@ import id.ac.ui.cs.advprog.order.repository.OrderRepository;
 import id.ac.ui.cs.advprog.order.repository.OrderItemRepository;
 import id.ac.ui.cs.advprog.order.status.CancelledState;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,7 +23,6 @@ public class OrderServiceImpl implements OrderService{
     private static final String ORDER_NOT_FOUND = "Order with ID ";
     private static final String NOT_FOUND = " not found";
 
-    @Autowired
     public OrderServiceImpl(OrderRepository repository, OrderItemRepository orderItemRepository) {
         this.repository = repository;
         this.orderItemRepository = orderItemRepository;

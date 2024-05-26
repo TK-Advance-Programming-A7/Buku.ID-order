@@ -19,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -68,8 +70,8 @@ class OrderControllerTest {
         // Stubbing orderService methods
         when(orderService.getOrder(1)).thenReturn(orderJson);
         when(orderService.getOrder(999)).thenThrow(new NoSuchElementException("No such order"));
-        when(orderService.addOrder(Mockito.any(Order.class))).thenReturn(orderJson);
-        when(orderService.editOrder(anyInt(), Mockito.any(Order.class))).thenReturn(orderJson);
+        when(orderService.addOrder(any(Order.class))).thenReturn(orderJson);
+        when(orderService.editOrder(anyInt(), any(Order.class))).thenReturn(orderJson);
         when(orderService.deleteOrder(1)).thenReturn(orderJson);
         when(orderService.getAllOrdersOfUser("1")).thenReturn(orderJson);
         when(orderService.addBookToOrder(anyInt(), anyInt(), anyInt(), Mockito.anyFloat())).thenReturn(orderJson);
@@ -254,5 +256,243 @@ class OrderControllerTest {
         assertEquals("Order or Item with the given ID not found.", responseEntity.getBody());
     }
 
+    @Test
+    void testCancelOrderSuccess() throws Exception {
+        HashMap<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 1);
 
+        String expectedResponse = "Order cancelled successfully";
+        when(orderService.cancelOrder(1)).thenReturn(expectedResponse);
+
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.cancelOrder(jsonIdOrder);
+
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse, responseEntity.getBody());
+    }
+
+    @Test
+    void testCancelOrderNotFound() throws Exception {
+        HashMap<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 999);
+
+        when(orderService.cancelOrder(999)).thenThrow(new NoSuchElementException("There is no such order."));
+
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.cancelOrder(jsonIdOrder);
+
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("There is no such order.", responseEntity.getBody());
+    }
+
+    @Test
+    void testCancelOrderNotCancelable() throws Exception {
+        HashMap<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 1);
+
+        when(orderService.cancelOrder(1)).thenThrow(new IllegalArgumentException("Order is not cancelable."));
+
+        CompletableFuture<ResponseEntity<String>> responseEntityFuture = orderController.cancelOrder(jsonIdOrder);
+
+        ResponseEntity<String> responseEntity = responseEntityFuture.get();
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Order is not cancelable.", responseEntity.getBody());
+    }
+
+    @Test
+    void testAddOrder() throws Exception {
+        Order orderToAdd = new Order("12345", Collections.emptyList(), "Test Address");
+
+        when(orderService.addOrder(any(Order.class))).thenReturn(orderJson);
+
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", orderToAdd);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.addOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(orderJson, responseEntity.getBody());
+    }
+
+    @Test
+    void testAddOrderFailure() throws Exception {
+        Order orderToAdd = new Order("12345", Collections.emptyList(), "Test Address");
+
+        when(orderService.addOrder(any(Order.class))).thenThrow(new RuntimeException("Failed to add order."));
+
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", orderToAdd);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.addOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Failed to add order.", responseEntity.getBody());
+    }
+
+    @Test
+    void testEditOrder() throws Exception {
+        Order orderToEdit = new Order("12345", Collections.emptyList(), "Updated Address");
+        orderToEdit.setIdOrder(1);
+
+        when(orderService.editOrder(anyInt(), any(Order.class))).thenReturn(orderJson);
+
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", orderToEdit);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.editOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(orderJson, responseEntity.getBody());
+    }
+
+    @Test
+    void testEditOrderNotFound() throws Exception {
+        Order orderToEdit = new Order("12345", Collections.emptyList(), "Updated Address");
+        orderToEdit.setIdOrder(1);
+
+        when(orderService.editOrder(anyInt(), any(Order.class))).thenThrow(new NoSuchElementException("Order with the given ID not found."));
+
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", orderToEdit);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.editOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Order with the given ID not found.", responseEntity.getBody());
+    }
+
+    @Test
+    void testEditOrderFailure() throws Exception {
+        Order orderToEdit = new Order("12345", Collections.emptyList(), "Updated Address");
+        orderToEdit.setIdOrder(1);
+
+        when(orderService.editOrder(anyInt(), any(Order.class))).thenThrow(new RuntimeException("Failed to edit order."));
+
+        Map<String, Order> requestBody = new HashMap<>();
+        requestBody.put("order", orderToEdit);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.editOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Failed to edit order.", responseEntity.getBody());
+    }
+
+
+    @Test
+    void testAddBookToOrderSuccess() throws Exception {
+        int orderId = 1;
+        int bookId = 1;
+        int quantity = 2;
+        float price = 10.0f;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", orderId);
+        requestBody.put("idBook", bookId);
+        requestBody.put("quantity", quantity);
+        requestBody.put("price", price);
+
+        String addedBookToOrderJson = "Added book to order JSON";
+
+        when(orderService.addBookToOrder(orderId, bookId, quantity, price)).thenReturn(addedBookToOrderJson);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.addBookToOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(addedBookToOrderJson, responseEntity.getBody());
+    }
+
+    @Test
+    void testAddBookToOrderNotFound() throws Exception {
+        int orderId = 1;
+        int bookId = 1;
+        int quantity = 2;
+        float price = 10.0f;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", orderId);
+        requestBody.put("idBook", bookId);
+        requestBody.put("quantity", quantity);
+        requestBody.put("price", price);
+
+        when(orderService.addBookToOrder(orderId, bookId, quantity, price)).thenThrow(new NoSuchElementException());
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.addBookToOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Order or Book with the given ID not found.", responseEntity.getBody());
+    }
+
+    @Test
+    void testAddBookToOrderFailed() throws Exception {
+        Map<String, Object> requestBody = new HashMap<>();
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.addBookToOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Failed to add book to order.", responseEntity.getBody());
+    }
+
+    @Test
+    void testDecreaseBookInOrderSuccess() throws Exception {
+        int orderId = 1;
+        int bookId = 1;
+        int quantity = 1;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", orderId);
+        requestBody.put("idBook", bookId);
+        requestBody.put("quantity", quantity);
+
+        String decreasedBookInOrderJson = "Decreased book in order JSON";
+
+        when(orderService.decreaseBookInOrder(orderId, bookId, quantity)).thenReturn(decreasedBookInOrderJson);
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.decreaseBookInOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(decreasedBookInOrderJson, responseEntity.getBody());
+    }
+
+    @Test
+    void testDecreaseBookInOrderNotFound() throws Exception {
+        int orderId = 1;
+        int bookId = 1;
+        int quantity = 1;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", orderId);
+        requestBody.put("idBook", bookId);
+        requestBody.put("quantity", quantity);
+
+        when(orderService.decreaseBookInOrder(orderId, bookId, quantity)).thenThrow(new NoSuchElementException());
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.decreaseBookInOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Order or Book with the given ID not found.", responseEntity.getBody());
+    }
+
+    @Test
+    void testDecreaseBookFailed() throws Exception {
+        Map<String, Object> requestBody = new HashMap<>();
+
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.decreaseBookInOrder(requestBody);
+        ResponseEntity<String> responseEntity = responseFuture.get();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Failed to decrease book in order.", responseEntity.getBody());
+    }
 }

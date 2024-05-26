@@ -18,10 +18,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 class OrderControllerTest {
@@ -74,8 +73,200 @@ class OrderControllerTest {
         when(orderService.editOrder(anyInt(), any(Order.class))).thenReturn(orderJson);
         when(orderService.deleteOrder(1)).thenReturn(orderJson);
         when(orderService.getAllOrdersOfUser("1")).thenReturn(orderJson);
-        when(orderService.addBookToOrder(anyInt(), anyInt(), anyInt(), Mockito.anyFloat())).thenReturn(orderJson);
+        when(orderService.addBookToOrder(anyInt(), anyInt(), anyInt(), anyFloat())).thenReturn(orderJson);
         when(orderService.decreaseBookInOrder(anyInt(), anyInt(), anyInt())).thenReturn(orderJson);
+    }
+
+    @Test
+    void nextStatus_JsonProcessingExceptionThrown_RuntimeExceptionThrown() throws JsonProcessingException {
+        // Mocking orderService to throw JsonProcessingException
+        when(orderService.updateNextStatus(anyInt())).thenThrow(new JsonProcessingException("Error processing JSON") {});
+
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 1);
+
+        // Verifying that a RuntimeException is thrown
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            orderController.nextStatus(jsonIdOrder).join();
+        });
+
+        // Verifying that the exception message matches
+        assertEquals("java.util.concurrent.CompletionException: java.lang.RuntimeException: id.ac.ui.cs.advprog.order.controller.OrderControllerTest$1: Error processing JSON",
+                exception.toString());
+    }
+
+    @Test
+    void cancelOrder_JsonProcessingExceptionThrown_RuntimeExceptionThrown() throws JsonProcessingException {
+        // Mocking orderService to throw JsonProcessingException
+        when(orderService.cancelOrder(anyInt())).thenThrow(new JsonProcessingException("Error processing JSON") {});
+
+        Map<String, Integer> jsonIdOrder = new HashMap<>();
+        jsonIdOrder.put("idOrder", 1);
+
+        // Verifying that a RuntimeException is thrown
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            orderController.cancelOrder(jsonIdOrder).join();
+        });
+
+        // Verifying that the exception message matches
+        assertEquals("java.util.concurrent.CompletionException: java.lang.RuntimeException: id.ac.ui.cs.advprog.order.controller.OrderControllerTest$2: Error processing JSON",
+                exception.toString());
+    }
+
+    @Test
+    void getOrderByUserIdAndStatus_ExceptionThrown_InternalServerErrorReturned() throws JsonProcessingException {
+        // Mocking orderService to throw a generic exception
+        when(orderService.getOrdersByUserIdAndStatus(any(String.class), any(String.class)))
+                .thenThrow(new RuntimeException("Unexpected error"));
+
+        // Calling the getOrderByUserIdAndStatus method and verifying the response
+        ResponseEntity<String> response = orderController.getOrderByUserIdAndStatus("1", "status");
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to fetch orders.", response.getBody());
+    }
+
+    @Test
+    void deleteItemFromOrder_ExceptionThrown_InternalServerErrorReturned() throws JsonProcessingException {
+        // Mocking orderService to throw a generic exception
+        when(orderService.deleteItemFromOrder(anyInt(), anyInt())).thenThrow(new RuntimeException("Unexpected error"));
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("idOrder", 1);
+        requestBody.put("idOrderItem", 1);
+
+        // Calling the deleteItemFromOrder method and verifying the response
+        ResponseEntity<String> response = orderController.deleteItemFromOrder(requestBody).join();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to delete item from order.", response.getBody());
+    }
+
+    @Test
+    void addBookToOrder_InvalidRequestBody_IllegalArgumentException() throws JsonProcessingException {
+        Map<String, Object> requestBody = Map.of(
+                "idOrder", 1,
+                "idBook", "invalidBookId",
+                "quantity", 2,
+                "price", "invalidPrice"
+        );
+
+        // Stub orderService to throw IllegalArgumentException
+        doThrow(new IllegalArgumentException("Invalid request body")).when(orderService)
+                .addBookToOrder(anyInt(), anyInt(), anyInt(), anyFloat());
+
+        // Call the addBookToOrder method and verify the response
+        ResponseEntity<String> response = orderController.addBookToOrder(requestBody).join();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to add book to order.", response.getBody());
+    }
+
+    @Test
+    void decreaseBookInOrder_InvalidRequestBody_IllegalArgumentException() throws JsonProcessingException {
+        Map<String, Object> requestBody = Map.of(
+                "idOrder", 1,
+                "idBook", "invalidBookId",
+                "quantity", "invalidQuantity"
+        );
+
+        // Stub orderService to throw IllegalArgumentException
+        doThrow(new IllegalArgumentException("Invalid request body")).when(orderService)
+                .decreaseBookInOrder(anyInt(), anyInt(), anyInt());
+
+        // Call the decreaseBookInOrder method and verify the response
+        ResponseEntity<String> response = orderController.decreaseBookInOrder(requestBody).join();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to decrease book in order.", response.getBody());
+    }
+
+    @Test
+    void getAllOrdersOfUser_ExceptionThrown_InternalServerErrorReturned() throws JsonProcessingException {
+        String idUser = "1";
+
+        // Stub orderService to throw a generic exception
+        doThrow(new RuntimeException("Unexpected error")).when(orderService).getAllOrdersOfUser(idUser);
+
+        // Call the getAllOrdersOfUser method and verify the response
+        ResponseEntity<String> response = orderController.getAllOrdersOfUser(idUser);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to fetch orders.", response.getBody());
+    }
+
+    @Test
+    void deleteOrder_ExceptionThrown_InternalServerErrorReturned() {
+        Map<String, Integer> jsonIdOrder = Map.of("idOrder", 1);
+
+        // Stub orderService to throw a generic exception
+        doThrow(new RuntimeException("Unexpected error")).when(orderService).deleteOrder(anyInt());
+
+        // Call the deleteOrder method and verify the response
+        ResponseEntity<String> response = orderController.deleteOrder(jsonIdOrder).join();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to delete order.", response.getBody());
+    }
+
+    @Test
+    void deleteOrder_OrderExists_ReturnsDeletedOrderJson() {
+        Map<String, Integer> jsonIdOrder = Map.of("idOrder", 1);
+
+        ResponseEntity<String> response = orderController.deleteOrder(jsonIdOrder).join();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(orderJson, response.getBody());
+    }
+
+    @Test
+    void deleteOrder_OrderNotExists_ReturnsNotFound() {
+        Map<String, Integer> jsonIdOrder = Map.of("idOrder", 999);
+
+        // Stub orderService to throw NoSuchElementException
+        doThrow(new NoSuchElementException("Order with the given ID not found")).when(orderService).deleteOrder(999);
+
+        ResponseEntity<String> response = orderController.deleteOrder(jsonIdOrder).join();
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Order with the given ID not found.", response.getBody());
+    }
+
+    @Test
+    void getOrder_JsonProcessingExceptionThrown_RuntimeExceptionThrown() throws JsonProcessingException {
+        int orderId = 1;
+
+        // Stub orderService to throw JsonProcessingException
+        when(orderService.getOrder(orderId)).thenThrow(new JsonProcessingException("Error processing JSON") {});
+
+        // Verify that a RuntimeException is thrown
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            orderController.getOrder(orderId);
+        });
+
+        // Verify that the exception message contains the expected substring
+        assertTrue(exception.toString().contains("Error processing JSON"));
+    }
+
+
+    @Test
+    void getOrder_OrderExists_ReturnsOrderJson() {
+        int orderId = 1;
+
+        ResponseEntity<String> response = orderController.getOrder(orderId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(orderJson, response.getBody());
+    }
+
+    @Test
+    void getOrder_OrderNotExists_ReturnsNotFound() {
+        int orderId = 999;
+
+        ResponseEntity<String> response = orderController.getOrder(orderId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Order not found.", response.getBody());
     }
 
     @Test

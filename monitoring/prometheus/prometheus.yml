@@ -1,8 +1,8 @@
 scrape_configs:
-  - job_name: 'MyAppMetrics'
+  - job_name: 'OrderMetrics'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 3s
     static_configs:
-      - targets: ['host.docker.internal:8080']
+      - targets: ['35.247.111.123:80','host.docker.internal:80']
         labels:
-          application: 'My Spring Boot Application'
+          application: 'order'

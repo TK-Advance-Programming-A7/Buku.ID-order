@@ -83,7 +83,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{idUser}")
-    public ResponseEntity<String> getAllOrdersOfUser(@PathVariable int idUser) {
+    public ResponseEntity<String> getAllOrdersOfUser(@PathVariable String idUser) {
         try {
             String ordersJson = orderService.getAllOrdersOfUser(idUser);
             return ResponseEntity.ok(ordersJson);
@@ -164,7 +164,7 @@ public class OrderController {
     }
 
     @GetMapping("users/status")
-    public ResponseEntity<String> getOrderByUserIdAndStatus(@RequestParam int userId, @RequestParam String status) {
+    public ResponseEntity<String> getOrderByUserIdAndStatus(@RequestParam String userId, @RequestParam String status) {
         try {
             String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);
             return ResponseEntity.ok(ordersJson);

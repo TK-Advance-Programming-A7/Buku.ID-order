@@ -31,7 +31,7 @@ public class Order {
     private int idOrder;
 
     @Column(name = "id_user")
-    private int idUser;
+    private String idUser;
 
     @Column(name = "order_date")
     private String orderDate;
@@ -60,14 +60,14 @@ public class Order {
 
     }
 
-    public Order(int idUser) {
+    public Order(String idUser) {
         this.idUser = idUser;
         this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());
         this.setTotalPrice();
     }
 
-    public Order(int idUser, List<OrderItem> newItems, String address) {
+    public Order(String idUser, List<OrderItem> newItems, String address) {
         this.idUser = idUser;
         this.orderDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
         setState(new WaitingCheckoutState());

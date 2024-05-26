@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.order.model;
 
-import id.ac.ui.cs.advprog.order.status.CancelledState;
-import id.ac.ui.cs.advprog.order.status.WaitingCheckoutState;
+import id.ac.ui.cs.advprog.order.status.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,15 +32,15 @@ class OrderTest {
         orderItems.add(item2);
 
         // Initialize the order
-        order = new Order(888640678);
+        order = new Order("888640678");
         order.getItems().addAll(orderItems);
         order.setTotalPrice();
     }
 
     @Test
     void testOrderCreationWithIdUser() {
-        Order newOrder = new Order(123456789);
-        assertEquals(123456789, newOrder.getIdUser());
+        Order newOrder = new Order("123456789");
+        assertEquals("123456789", newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
         assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
     }
@@ -49,8 +48,8 @@ class OrderTest {
     @Test
     void testOrderCreationWithIdUserAndItems() {
         ArrayList<OrderItem> newItems = new ArrayList<>(orderItems);
-        Order newOrder = new Order(123456789, newItems, "UI");
-        assertEquals(123456789, newOrder.getIdUser());
+        Order newOrder = new Order("123456789", newItems, "UI");
+        assertEquals("123456789", newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
         assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
         assertEquals(newItems, newOrder.getItems());
@@ -66,6 +65,34 @@ class OrderTest {
     void testSetState() {
         order.setState(new CancelledState());
         assertInstanceOf(CancelledState.class, order.getState());
+    }
+
+    @Test
+    void testSetStateCheckout() {
+        order.setState(new WaitingCheckoutState());
+        assertInstanceOf(WaitingCheckoutState.class, order.getState());
+    }
+
+    @Test
+    void testSetStatusCheckout() {
+        order.setStatus("Waiting Checkout");
+        assertInstanceOf(WaitingCheckoutState.class, order.getState());
+        assertEquals("Waiting Checkout", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusWaitingCheckoutSameState() {
+        order.setState(new WaitingCheckoutState());
+        order.setStatus("Waiting Checkout");
+        assertInstanceOf(WaitingCheckoutState.class, order.getState());
+        assertEquals("Waiting Checkout", order.getStatus());
+    }
+
+    @Test
+    void testSetStatusWaitingDelivered() {
+        order.setStatus("Waiting Delivered");
+        assertEquals("Waiting Delivered", order.getStatus());
+        assertInstanceOf(WaitingDeliveredState.class, order.getState());
     }
 
     @Test
@@ -138,5 +165,65 @@ class OrderTest {
         orderItem.setOrder(testOrder);
 
         assertEquals(testOrder, orderItem.getOrder());
+    }
+
+    @Test
+    void testSetStatus() {
+        Order order = new Order();
+        order.setStatus("Waiting Checkout");
+        assertEquals("Waiting Checkout", order.getStatus());
+
+        order.setStatus("Waiting Payment");
+        assertEquals("Waiting Payment", order.getStatus());
+
+        order.setStatus("Cancelled");
+        assertEquals("Cancelled", order.getStatus());
+
+        order.setStatus("Waiting Delivered");
+        assertEquals("Waiting Delivered", order.getStatus());
+    }
+
+    @Test
+    void testSetIdUser() {
+        Order order = new Order();
+        order.setIdUser("12345");
+        assertEquals("12345", order.getIdUser());
+    }
+
+    @Test
+    void testSetOrderDate() {
+        Order order = new Order();
+        String date = "2024-05-26T14:30:00";
+        order.setOrderDate(date);
+        assertEquals(date, order.getOrderDate());
+    }
+
+    @Test
+    void testSetItems() {
+        Order order = new Order();
+        List<OrderItem> items = new ArrayList<>();
+        OrderItem item1 = new OrderItem();
+        item1.setIdBook(1);
+        item1.setAmount(2);
+        item1.setPrice(10.99f);
+
+        OrderItem item2 = new OrderItem();
+        item2.setIdBook(2);
+        item2.setAmount(1);
+        item2.setPrice(8.50f);
+
+        items.add(item1);
+        items.add(item2);
+
+        order.setItems(items);
+        assertEquals(items, order.getItems());
+    }
+
+    @Test
+    void testSetTotalPrice() {
+        Order order = new Order();
+        float totalPrice = 50.0f;
+        order.setTotalPrice(totalPrice);
+        assertEquals(totalPrice, order.getTotalPrice(), 0.001);
     }
 }

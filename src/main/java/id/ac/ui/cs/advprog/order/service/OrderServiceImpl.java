@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    public String getAllOrdersOfUser(int userId) throws JsonProcessingException {
+    public String getAllOrdersOfUser(String userId) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUser(userId);
         orders.forEach(order -> order.setStatus(order.getStatus()));  // This reinitializes the transient State based on the persistent Status
 
@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService{
         return new Gson().toJson("Delete is successful.");
     }
 
-    private OrderItem findOrderItemByBookId(Order order, int bookId) {
+    OrderItem findOrderItemByBookId(Order order, int bookId) {
         return order.getItems().stream()
                 .filter(item -> item.getIdBook() == bookId)
                 .findFirst()
@@ -185,12 +185,12 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    private OrderItem findOrderItemById(int id) {
+    OrderItem findOrderItemById(int id) {
         return orderItemRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + NOT_FOUND));
     }
 
-    public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
+    public String getOrdersByUserIdAndStatus(String userId, String status) throws JsonProcessingException {
         List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
         orders.forEach(order -> order.setStatus(order.getStatus()));
         return objectMapper.writeValueAsString(orders);

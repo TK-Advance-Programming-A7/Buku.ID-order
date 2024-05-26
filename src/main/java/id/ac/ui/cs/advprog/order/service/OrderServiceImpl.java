@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService{
         return new Gson().toJson("Delete is successful.");
     }
 
-    private OrderItem findOrderItemByBookId(Order order, int bookId) {
+    OrderItem findOrderItemByBookId(Order order, int bookId) {
         return order.getItems().stream()
                 .filter(item -> item.getIdBook() == bookId)
                 .findFirst()
@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    private OrderItem findOrderItemById(int id) {
+    OrderItem findOrderItemById(int id) {
         return orderItemRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Order Item with ID " + id + NOT_FOUND));
     }

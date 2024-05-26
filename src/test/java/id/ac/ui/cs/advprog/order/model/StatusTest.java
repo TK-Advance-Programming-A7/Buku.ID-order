@@ -6,7 +6,7 @@ class StatusTest {
 
     @Test
     void testAllStatusStateAndCancelable() {
-        Order order = new Order(1);
+        Order order = new Order("1");
         assertEquals("Waiting Checkout", order.getStatus());
         assertTrue(order.isCancelable());
 
@@ -19,7 +19,7 @@ class StatusTest {
         assertFalse(order.isCancelable());
 
 
-        order = new Order(1);
+        order = new Order("1");
         order.cancelOrder();
         assertEquals("Cancelled", order.getStatus());
         order.nextStatus();

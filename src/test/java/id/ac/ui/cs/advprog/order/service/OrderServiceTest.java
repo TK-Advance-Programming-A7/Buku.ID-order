@@ -54,15 +54,15 @@ class OrderServiceTest {
 
         orders = new ArrayList<>();
 
-        Order order1 = new Order(888640678,
+        Order order1 = new Order("888640678",
                 orderItems,
                 "Depok");
         orders.add(order1);
-        Order order2 = new Order(888640679,
+        Order order2 = new Order("888640679",
                 orderItems,
                 "Jakarta");
         orders.add(order2);
-        Order order3 = new Order(888640680,
+        Order order3 = new Order("888640680",
                 orderItems,
                 "Cibinong");
         orders.add(order3);
@@ -242,7 +242,7 @@ class OrderServiceTest {
 
     @Test
     void getOrdersByUserIdAndStatus_ValidUserIdAndStatus_OrdersRetrievedSuccessfully() throws JsonProcessingException {
-        int userId = 123;
+        String userId = "123";
         String status = "Waiting Checkout";
         when(orderRepository.findAllByIdUserAndStatus(userId, status)).thenReturn(orders);
 

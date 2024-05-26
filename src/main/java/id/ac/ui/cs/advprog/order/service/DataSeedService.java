@@ -28,7 +28,6 @@ public class DataSeedService {
         try {
             for (int i = 0; i < NUMBER_OF_ORDERS; i++) {
                 Order order = new Order();
-                order.setIdUser(faker.number().numberBetween(100, 999)); // Contoh ID pengguna 3 digit
                 order.setAddress(faker.address().fullAddress());
                 order.setOrderDate(faker.date().toString());
                 order.setState(new WaitingCheckoutState());

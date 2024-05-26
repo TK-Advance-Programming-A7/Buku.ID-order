@@ -38,7 +38,7 @@ class OrderRepositoryTest {
         orderItems.add(item1);
         orderItems.add(item2);
 
-        order = new Order(8886406, orderItems, "Rukita Pepaya Margonda");
+        order = new Order("8886406", orderItems, "Rukita Pepaya Margonda");
         order.setTotalPrice();
         orders.add(order);
     }
@@ -128,11 +128,11 @@ class OrderRepositoryTest {
     @Test
     void testFindAllByUserIfUserIncorrect() {
         Mockito.when(orderRepository.saveAll(orders)).thenReturn(orders);
-        Mockito.when(orderRepository.findAllByIdUser(-1)).thenReturn(new ArrayList<>());
+        Mockito.when(orderRepository.findAllByIdUser("-1")).thenReturn(new ArrayList<>());
 
         orderRepository.saveAll(orders);
 
-        List<Order> orderList = orderRepository.findAllByIdUser(-1);
+        List<Order> orderList = orderRepository.findAllByIdUser("-1");
         assertTrue(orderList.isEmpty());
     }
 

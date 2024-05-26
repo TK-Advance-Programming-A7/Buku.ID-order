@@ -21,7 +21,7 @@ public interface OrderService {
 
     String editOrder(int idOrder, Order updatedOrder) throws JsonProcessingException;
 
-    String getAllOrdersOfUser(int idUser) throws JsonProcessingException;
+    String getAllOrdersOfUser(String idUser) throws JsonProcessingException;
 
     String deleteOrder(int idOrder);
 
@@ -33,7 +33,7 @@ public interface OrderService {
 
     String deleteItemFromOrder(int idOrder, int idItem) throws JsonProcessingException;
 
-    String getOrdersByUserIdAndStatus(int idUser, String status) throws JsonProcessingException;
+    String getOrdersByUserIdAndStatus(String idUser, String status) throws JsonProcessingException;
 
 
 }

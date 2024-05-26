@@ -33,15 +33,15 @@ class OrderTest {
         orderItems.add(item2);
 
         // Initialize the order
-        order = new Order(888640678);
+        order = new Order("888640678");
         order.getItems().addAll(orderItems);
         order.setTotalPrice();
     }
 
     @Test
     void testOrderCreationWithIdUser() {
-        Order newOrder = new Order(123456789);
-        assertEquals(123456789, newOrder.getIdUser());
+        Order newOrder = new Order("123456789");
+        assertEquals("123456789", newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
         assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
     }
@@ -49,8 +49,8 @@ class OrderTest {
     @Test
     void testOrderCreationWithIdUserAndItems() {
         ArrayList<OrderItem> newItems = new ArrayList<>(orderItems);
-        Order newOrder = new Order(123456789, newItems, "UI");
-        assertEquals(123456789, newOrder.getIdUser());
+        Order newOrder = new Order("123456789", newItems, "UI");
+        assertEquals("123456789", newOrder.getIdUser());
         assertNotNull(newOrder.getOrderDate());
         assertInstanceOf(WaitingCheckoutState.class, newOrder.getState());
         assertEquals(newItems, newOrder.getItems());

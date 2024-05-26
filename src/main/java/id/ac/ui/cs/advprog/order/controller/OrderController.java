@@ -3,7 +3,6 @@ package id.ac.ui.cs.advprog.order.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import id.ac.ui.cs.advprog.order.model.Order;
 import id.ac.ui.cs.advprog.order.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
-
 @RequestMapping("/api/v1/order")
 public class OrderController {
 
@@ -23,7 +20,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
@@ -163,7 +159,7 @@ public class OrderController {
         });
     }
 
-    @GetMapping("users/status")
+    @GetMapping("/users/status")
     public ResponseEntity<String> getOrderByUserIdAndStatus(@RequestParam String userId, @RequestParam String status) {
         try {
             String ordersJson = orderService.getOrdersByUserIdAndStatus(userId, status);

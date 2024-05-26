@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.order.controller;
 
 import id.ac.ui.cs.advprog.order.service.DataSeedService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ public class DataSeedController {
 
     private final DataSeedService dataSeedService;
 
-    @Autowired
     public DataSeedController(DataSeedService dataSeedService) {
         this.dataSeedService = dataSeedService;
     }

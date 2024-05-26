@@ -72,6 +72,54 @@ class OrderServiceTest {
         orders.add(order3);
     }
 
+
+    @Test
+    void deleteItemFromOrder_NonExistingItem_ExceptionThrown2() {
+        // Adding an order to the repository first
+        Order order = orders.getFirst();
+        when(orderRepository.findById(order.getIdOrder())).thenReturn(Optional.of(order));
+
+        int orderId = order.getIdOrder();
+        int itemId = 999; // Non-existing item ID
+
+        // Mocking the repository behavior
+        when(orderItemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        // Performing the test
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
+            orderService.deleteItemFromOrder(orderId, itemId);
+        });
+
+        // Verifying the exception message
+        assertEquals("Order Item with ID " + itemId + " not found", exception.getMessage());
+    }
+
+    @Test
+    void decreaseBookInOrder_BookQuantityDecreasedToZero_ItemRemovedSuccessfully() throws JsonProcessingException {
+        // Given
+        int orderId = orders.get(0).getIdOrder();
+        int bookId = 1;
+        int quantity = 2; // Setting quantity to remove to 2, which matches the current amount of bookId 1 in the order
+
+        Order order = orders.get(0);
+        OrderItem itemToRemove = order.getItems().stream().filter(item -> item.getIdBook() == bookId).findFirst().orElse(null);
+
+        assertNotNull(itemToRemove, "Precondition failed: The item to be removed should exist in the order");
+
+        // Mock repository
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+
+        // When
+        String result = orderService.decreaseBookInOrder(orderId, bookId, quantity);
+
+        // Then
+        assertNotNull(result);
+        verify(orderRepository, times(2)).save(order); // Once for the removal and once at the end of the method
+        verify(orderItemRepository, times(1)).deleteById(itemToRemove.getIdOrderItem());
+        assertFalse(order.getItems().contains(itemToRemove), "The item should be removed from the order");
+        assertTrue(result.contains("\"items\":[]"), "The resulting JSON should indicate that no items are left in the order");
+    }
+
     @Test
     void addBookToOrder_ValidBookId_BookAddedSuccessfully() throws JsonProcessingException {
         // Mock repository
@@ -98,7 +146,7 @@ class OrderServiceTest {
         assertTrue(result.contains("\"amount\":1")); // Checking if the amount has been updated
     }
 
-
+    @Test
     void decreaseBookInOrder_InvalidBookId_ExceptionThrown() {
         // Mock repository
         when(orderRepository.findById(anyInt())).thenReturn(Optional.of(orders.getFirst()));

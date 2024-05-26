@@ -191,6 +191,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     public String getOrdersByUserIdAndStatus(int userId, String status) throws JsonProcessingException {
+        status = status.trim();
         List<Order> orders = repository.findAllByIdUserAndStatus(userId, status);
         orders.forEach(order -> order.setStatus(order.getStatus()));
         return objectMapper.writeValueAsString(orders);
